@@ -1,0 +1,34 @@
+schema_version: 2
+
+# 可选的一次性输入表：只写当前已知事实，用于建立 paper/paper.yaml。
+# 写入当前状态后不再同步本文件；未知项保留 TODO/unknown。
+project:
+  project_name: TODO
+  field: TODO
+  language: English
+
+problem:
+  # Q = (Object, Environment, Observation, Task, Failure, Desired understanding)
+  object: TODO
+  environment: TODO
+  observation: TODO
+  task_or_decision: TODO
+  failure_or_contradiction: TODO
+  desired_understanding: TODO
+
+research_state:
+  current_best_result: TODO
+  strongest_support: TODO
+  favored_explanation: TODO
+  strongest_competing_explanation: TODO
+  most_informative_next_action: TODO
+
+scope:
+  in_scope: []
+  out_of_scope: []
+  key_assumptions: []
+
+# 候选、暂定 front-runner 和作者选择分别保存在：
+# - paper/kickstart/idea_candidates.yaml
+# - paper/kickstart/core_innovation.md
+# - paper/paper.yaml -> idea_selection

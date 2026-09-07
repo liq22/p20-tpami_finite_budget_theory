@@ -1,0 +1,113 @@
+schema_version: 1
+suite: papertrace-product-surfaces
+
+cases:
+  - case_id: PRODUCT-CODE-001
+    language: en
+    prompt: Fix the tensor-shape bug in the tokenizer, update the relevant source code and regression test, and run the targeted test. Do not stop after explaining the module or updating MODULE_MAP.md.
+    expected_primary: code-change
+    expected_primary_surface: code
+    must_change_product: true
+    audit_allowed: false
+    must_not_trigger: [code-module-xray, 07-experiment-audit]
+    must_not_surface: [canonical_delta, route packet, audit chain, human gate]
+
+  - case_id: PRODUCT-MANUSCRIPT-001
+    language: en
+    prompt: Rewrite the Introduction to add the missing industrial context and improve the problem-gap-contribution logic. Modify the section directly in academic language; do not return an audit report.
+    expected_primary: 08-markdown-draft
+    expected_primary_surface: manuscript
+    must_change_product: true
+    audit_allowed: false
+    must_not_trigger: [07-experiment-audit, 11-reference-audit]
+    must_not_surface: [canonical evidence, claim promotion, evidence matrix, blocker]
+
+  - case_id: PRODUCT-ABSTRACT-FIREWALL-001
+    language: en
+    prompt: Rewrite the Abstract using the current verified scientific findings. Preserve the main findings and boundaries, but do not include corpus snapshot dates, record counts, coding states, promotion rules, repository paths, gates, ledgers, or review workflow.
+    expected_primary: 08-markdown-draft
+    expected_primary_surface: manuscript
+    must_change_product: true
+    audit_allowed: false
+    must_not_trigger: [10-language-polish, 11-reference-audit, peer-review]
+    must_not_surface: [coded snapshot, promotion rule, repository path, ledger, agent workflow]
+
+  - case_id: PRODUCT-COMPRESSION-001
+    language: zh
+    prompt: 将这一节压缩约三分之一。改写前先识别必须保留的 claim、定义、机制、假设、结果、工程例子、引用和边界；不得静默删除独特科学内容，并在修订后简要说明被合并、移动、弱化或删除的实质内容。
+    expected_primary: 08-markdown-draft
+    expected_primary_surface: manuscript
+    must_change_product: true
+    audit_allowed: false
+    must_not_trigger: [10-language-polish, peer-review, repository-self-evolution]
+    must_not_surface: [route packet, controller revision, validation matrix, prose score]
+
+  - case_id: PRODUCT-FIGURE-001
+    language: zh
+    prompt: 生成 Figure 2 的可编辑 SVG 和 PDF，并给出自包含 caption；不要只更新 figure manifest，也不要输出图表审计报告。
+    expected_primary: 15-figure-table-design
+    expected_primary_surface: figure
+    must_change_product: true
+    audit_allowed: false
+    must_not_trigger: [07-experiment-audit, 11-reference-audit]
+    must_not_surface: [manifest status, forbidden inference label, gate, blocker package]
+
+  - case_id: PRODUCT-EXPERIMENT-001
+    language: en
+    prompt: Run the approved matched baseline comparison, return the actual metrics and uncertainty, and save the result outputs. A run-ledger-only update is not completion.
+    expected_primary: 06-experiment-ops
+    expected_primary_surface: experiment
+    must_change_product: true
+    audit_allowed: false
+    must_not_trigger: [07-experiment-audit, code-module-xray]
+    must_not_surface: [terminal state report, artifact digest as the result, audit verdict, controller revision]
+
+  - case_id: PRODUCT-ARIS-EXECUTION-001
+    language: zh
+    prompt: 使用当前 PaperTrace execution profile 的 analyze-results 支持能力，分析已完成实验的数据。确认 estimand 和 independent unit，保存实际估计量、不确定性与 claim boundary。不要运行新实验、生成 Figure 或修改论文正文，也不要暴露 ARIS Skill 路径或 backend routing。
+    expected_primary: statistical-analysis
+    expected_primary_surface: experiment
+    must_change_product: true
+    audit_allowed: false
+    must_not_trigger: [06-experiment-ops, 07-experiment-audit, 15-figure-table-design, 08-markdown-draft]
+    must_not_surface: [ARIS skill selected, backend routing, assurance level, audit verdict, research-pipeline]
+
+  - case_id: PRODUCT-AUDIT-001
+    language: zh
+    prompt: 独立核验 RUN-0042 是否存在数据泄漏、baseline 不公平和统计功效不足；只给出具体科学问题和必要复跑，不修改实验代码。
+    expected_primary: 07-experiment-audit
+    expected_primary_surface: governance
+    must_change_product: false
+    audit_allowed: true
+    must_not_trigger: [06-experiment-ops, code-change]
+    must_not_surface: [controller migration, receipt chain, manifest drift, simulated reviewer count]
+
+  - case_id: PRODUCT-POLISH-001
+    language: zh
+    prompt: 把这段 Methods 英文润色得自然、专业、简洁。完整保留 claim、定义、机制、假设、工程例子、公式、数值、引用、术语和结论边界；只返回修订文本，不输出 grep、gate 或 readiness report。
+    expected_primary: 10-language-polish
+    expected_primary_surface: manuscript
+    must_change_product: true
+    audit_allowed: false
+    must_not_trigger: [11-reference-audit, 12-submission-pack]
+    must_not_surface: [evidence-stable gate, canonical source, audit result, route packet]
+
+  - case_id: PRODUCT-ANTI-DEFENSIVE-001
+    language: en
+    prompt: Revise this scientifically stable Discussion to remove repeated caveats, disclaimers, imagined-reviewer rebuttals, and stacked hedges. State necessary scope positively, retain the sample restriction, confidence interval, null result, citations, and evidence strength, and return the revised prose rather than a style audit.
+    expected_primary: 10-language-polish
+    expected_primary_surface: manuscript
+    must_change_product: true
+    audit_allowed: false
+    must_not_trigger: [05-claim-evidence, 08-markdown-draft, peer-review, 13-reviewer-response]
+    must_not_surface: [hedge count, banned-word score, caveat inventory, reviewer simulation, route packet]
+
+  - case_id: PRODUCT-EXTERNAL-001
+    language: en
+    prompt: Continue the approved experiment, but the required private dataset is not available in this environment. State the missing data action and stop; do not create blocker packages, receipts, handoff files, or reviewer simulations.
+    expected_primary: 06-experiment-ops
+    expected_primary_surface: experiment
+    must_change_product: false
+    audit_allowed: false
+    must_not_trigger: [07-experiment-audit, 14-agent-safety]
+    must_not_surface: [blocker package, receipt, handoff, reviewer simulation]

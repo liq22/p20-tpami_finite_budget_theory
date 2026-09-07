@@ -1,0 +1,26 @@
+experiment_name: TODO
+seed: 0
+
+data:
+  name: TODO
+  version: TODO
+  path: TODO
+
+model:
+  name: TODO
+  parameters: {}
+
+training:
+  epochs: TODO
+  batch_size: TODO
+  learning_rate: TODO
+
+runtime:
+  device: TODO
+  deterministic: true
+  output_dir: src/outputs/TODO
+
+reporting:
+  primary_metric: TODO
+  higher_is_better: true
+  ledger_path: paper/experiments/run_ledger.md

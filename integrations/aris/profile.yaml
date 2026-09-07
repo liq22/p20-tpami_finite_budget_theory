@@ -1,0 +1,121 @@
+schema_version: 1
+name: papertrace-product-first
+
+submodule:
+  path: external/aris
+  url: https://github.com/wanshuiyin/Auto-claude-code-research-in-sleep.git
+  pinned_commit: 3e49e63aae6a653067f9e2101d50457f1f7d6a2f
+  optional: true
+
+host_exposure:
+  expose_aris_skills: false
+  allowed_papertrace_entrypoints:
+    - 00-router
+    - grill-me
+  forbidden_installers:
+    - tools/install_aris.sh
+    - tools/install_aris_codex.sh
+    - tools/install_aris_copilot.sh
+    - tools/install_aris.ps1
+
+skill_roots:
+  codex:
+    - skills/skills-codex
+    - skills
+  claude:
+    - skills
+    - skills/skills-codex
+
+capabilities:
+  allowed:
+    literature:
+      - arxiv
+      - openalex
+      - semantic-scholar
+      - deepxiv
+    experiments:
+      - run-experiment
+      - monitor-experiment
+      - analyze-results
+      - system-profile
+      - experiment-queue
+    visuals:
+      - figure-spec
+      - paper-figure
+      - mermaid-diagram
+      - paper-slides
+    compilation:
+      - paper-compile
+
+  explicit_only:
+    - experiment-audit
+    - result-to-claim
+    - citation-audit
+    - paper-claim-audit
+    - kill-argument
+
+  disabled:
+    - research-pipeline
+    - idea-discovery
+    - auto-review-loop
+    - auto-review-loop-llm
+    - auto-review-loop-minimax
+    - paper-writing
+    - auto-paper-improvement-loop
+    - integrity-forensics
+    - resubmit-pipeline
+    - ablation-planner
+
+runtime_requirements:
+  deepxiv:
+    python_packages:
+      - deepxiv
+    install_hint: python -m pip install deepxiv-sdk
+  openalex:
+    python_packages:
+      - requests
+    install_hint: python -m pip install requests
+  experiment-queue:
+    commands:
+      - ssh
+    install_hint: Install an SSH client and configure key-based access to the target host.
+  run-experiment:
+    note: The selected experiment may require local or remote GPU software that PaperTrace cannot install generically.
+  system-profile:
+    note: Profiling commands depend on the selected CPU, GPU, process, or interconnect target.
+  paper-figure:
+    python_packages:
+      - matplotlib
+    install_hint: python -m pip install matplotlib
+  paper-compile:
+    commands:
+      - latexmk
+    install_hint: Install a LaTeX distribution that provides latexmk.
+  paper-slides:
+    commands:
+      - latexmk
+    python_packages:
+      - pptx
+    install_hint: Install LaTeX and run python -m pip install python-pptx.
+
+profiles:
+  core:
+    label: PaperTrace Core
+    description: Start with research state, methods, code, writing, and native PaperTrace tools. ARIS is not downloaded.
+    initialize_submodule: false
+    allow_execution_capabilities: false
+    allow_explicit_review_capabilities: false
+
+  execution:
+    label: Research Execution
+    description: Explicitly add selected ARIS retrieval, experiment, figure, and compilation capabilities behind PaperTrace.
+    initialize_submodule: true
+    allow_execution_capabilities: true
+    allow_explicit_review_capabilities: false
+
+  review:
+    label: Advanced Review
+    description: Explicitly add independent ARIS review capabilities; review never becomes the default route.
+    initialize_submodule: true
+    allow_execution_capabilities: true
+    allow_explicit_review_capabilities: true

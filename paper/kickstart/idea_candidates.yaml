@@ -1,0 +1,8 @@
+schema_version: 2
+
+# 仅在研究方向仍开放时添加候选。已有明确问题的项目可保持空列表。
+# provisional_front_runner_id 是 Agent 的暂定建议，不代表作者选择或批准。
+# 作者选择的唯一机器状态是 paper/paper.yaml -> idea_selection。
+core_innovation_document: paper/kickstart/core_innovation.md
+provisional_front_runner_id: TODO
+candidates: []

@@ -1,0 +1,254 @@
+schema_version: 1
+suite: papertrace-routing
+cases:
+  - case_id: ROUTE-001
+    language: en
+    critical: true
+    prompt: Review this paper repository, identify the highest-value bounded scientific or implementation problem, change the direct product now, and do not stop after a route packet or audit report.
+    expected_primary: 00-router
+    must_not_trigger: [08-markdown-draft, 12-submission-pack, repository-self-evolution]
+
+  - case_id: ROUTE-EXEC-001
+    language: zh
+    critical: true
+    prompt: 优化这个论文仓库：找出当前最重要的 failure 或科学语义错误，直接完成一个最小修改并验证；不要只返回检查表、状态报告或排版建议。
+    expected_primary: 00-router
+    must_not_trigger: [14-agent-safety, grill-me, peer-review]
+
+  - case_id: SAFETY-GREEN-001
+    language: en
+    critical: true
+    prompt: Apply one narrow reversible local documentation fix already requested and run the closest existing check; do not terminate at a safety review.
+    expected_primary: 00-router
+    must_not_trigger: [14-agent-safety, grill-me, 12-submission-pack]
+
+  - case_id: BRAIN-001
+    language: zh
+    critical: true
+    prompt: 从当前真实 failure 或未决矛盾出发，生成不超过四个机制不同、可以被最小实验淘汰的 IDEA 候选；没有足够机制差异时保留更少候选，下一个候选开始重复时停止；不要批准方向、写论文或堆模块变体。
+    expected_primary: scientific-brainstorming
+    must_not_trigger: [hypothesis-generation, method-design, 02-research-question, 08-markdown-draft]
+
+  - case_id: HYP-001
+    language: en
+    critical: true
+    prompt: Formalize selected IDEA-003 into the favored mechanism, strongest competing explanation, divergent predictions, rejection condition, main confound, and one decisive experiment; do not approve or implement it.
+    expected_primary: hypothesis-generation
+    must_not_trigger: [scientific-brainstorming, method-design, 02-research-question, 06-experiment-ops]
+
+  - case_id: BRIEF-001
+    language: en
+    critical: true
+    prompt: Update the current project state with the bounded problem, strongest result, main failure, mechanism hypothesis, competing explanation, missing experiment, and next research action without drafting manuscript prose.
+    expected_primary: 01-project-brief
+    must_not_trigger: [scientific-brainstorming, 08-markdown-draft, peer-review]
+
+  - case_id: RQ-001
+    language: zh
+    critical: true
+    prompt: 比较 IDEA-003 与最强近邻，基于 failure、机制差异、可观察 prediction 和 decisive test，决定保留、修改、合并或淘汰，并给出最小 Claim Tree。
+    expected_primary: 02-research-question
+    must_not_trigger: [01-project-brief, scientific-brainstorming, hypothesis-generation, 06-experiment-ops]
+
+  - case_id: METHOD-001
+    language: en
+    critical: true
+    prompt: Design the minimum method for C1 from the observed failure. Update method_spec.yaml with competing explanations, minimal intervention, assumptions, testable implication, component alternatives, deletion tests, fair decisive comparison, and boundary; do not write code or run experiments.
+    expected_primary: method-design
+    must_not_trigger: [scientific-brainstorming, hypothesis-generation, code-change, 06-experiment-ops, 08-markdown-draft]
+
+  - case_id: LIT-001
+    language: en
+    critical: true
+    prompt: Search and verify the foundational work, closest competitors, relevant mechanism theory, and papers reporting this failure; synthesize dominant assumptions, contradictions, and our entry point instead of enforcing database quotas.
+    expected_primary: 03-literature-deep-research
+    must_not_trigger: [scientific-brainstorming, 08-markdown-draft, 11-reference-audit]
+
+  - case_id: LIT-REVIEW-001
+    language: zh
+    critical: false
+    prompt: 对这个明确问题做较完整的主题式文献综合，核验关键原文并更新引用；普通研究论文，不需要 PRISMA 或系统综述流程。
+    expected_primary: literature-review
+    must_not_trigger: [peer-review, 11-reference-audit, 12-submission-pack]
+
+  - case_id: VENUE-001
+    language: zh
+    critical: true
+    prompt: 用官方政策和近三年同类论文比较 TPAMI、Nature Machine Intelligence 和 Nature Communications 的适配性。
+    expected_primary: 04-journal-fit
+    must_not_trigger: [09-tex-freeze-formalize, 12-submission-pack]
+
+  - case_id: EVIDENCE-001
+    language: en
+    critical: true
+    prompt: Decide whether RUN-0012 and verified source R7 support C2, distinguish fact from inference and hypothesis, state the support type and boundary, and revise the claim if needed.
+    expected_primary: 05-claim-evidence
+    must_not_trigger: [06-experiment-ops, 08-markdown-draft, peer-review]
+
+  - case_id: EXP-DESIGN-001
+    language: en
+    critical: true
+    prompt: Design the smallest fair experiment that distinguishes mechanism A from the capacity-only explanation. Fix the independent unit, baseline, intervention, confound control, primary and mechanism metrics, rejection signature, and boundary test; do not run it.
+    expected_primary: experimental-design
+    must_not_trigger: [06-experiment-ops, statistical-analysis, statistical-power, 07-experiment-audit]
+
+  - case_id: RUN-001
+    language: en
+    critical: true
+    prompt: Execute one bounded matched baseline experiment for the mechanism claim, inspect actual outputs and uncertainty, preserve a null or negative result, and return the claim decision rather than only a run record.
+    expected_primary: 06-experiment-ops
+    must_not_trigger: [02-research-question, hypothesis-generation, method-design, 07-experiment-audit]
+
+  - case_id: STATS-001
+    language: zh
+    critical: true
+    prompt: 分析这个已完成实验的数据，先确认真正 independent unit 和 estimand，再选择最简单合适的模型，报告估计量、不确定性和 claim 边界；不要机械添加 p-value、Bayesian 或 power。
+    expected_primary: statistical-analysis
+    must_not_trigger: [statistical-power, experimental-design, 06-experiment-ops, peer-review]
+
+  - case_id: POWER-001
+    language: en
+    critical: true
+    prompt: For this planned clustered experiment, estimate the sample size or minimum detectable effect using a defensible effect scale and the actual planned model; do not analyze collected data or generate mandatory figures.
+    expected_primary: statistical-power
+    must_not_trigger: [statistical-analysis, experimental-design, 06-experiment-ops]
+
+  - case_id: AUDIT-001
+    language: zh
+    critical: true
+    prompt: 独立审查 METH-001 和 RUN-0042 是否存在会改变结论的数据泄漏、baseline 不公平、错误 independent unit 或实现—方法不一致；不要修改代码或制造完整审计包。
+    expected_primary: 07-experiment-audit
+    must_not_trigger: [method-design, 06-experiment-ops, code-change, peer-review, grill-me]
+
+  - case_id: CRITICAL-001
+    language: en
+    critical: true
+    prompt: Pressure-test claim C2 only and identify the strongest competing explanation, at most five conclusion-changing validity threats, the smallest decisive test, and the strongest claim that survives.
+    expected_primary: scientific-critical-thinking
+    must_not_trigger: [peer-review, 07-experiment-audit, 08-markdown-draft, statistical-analysis]
+
+  - case_id: PEER-001
+    language: zh
+    critical: true
+    prompt: 对整篇稿件做对抗式审稿，只选择必要的 novelty、theory、experiment 和 generalization 视角，优先给最多三个 P0/P1 问题、最弱 claim、缺失证据和有序 revision plan。
+    expected_primary: peer-review
+    must_not_trigger: [scientific-critical-thinking, 07-experiment-audit, 13-reviewer-response]
+
+  - case_id: CODE-CHANGE-001
+    language: zh
+    critical: true
+    prompt: 修复 sampling-rate metadata 传播错误，语义不一致时 fail-fast，直接修改源码和针对性 regression test；不要添加多层 wrapper、fallback 或只更新 MODULE_MAP。
+    expected_primary: code-change
+    must_not_trigger: [code-module-xray, method-design, 07-experiment-audit, 00-router]
+
+  - case_id: XRAY-001
+    language: zh
+    critical: true
+    prompt: 对这个子系统做 code module X-ray，解释 scientific role、输入输出、调用关系、配置、失败特征和论文链接；不要重构代码或重新设计方法。
+    expected_primary: code-module-xray
+    must_not_trigger: [code-change, method-design, 06-experiment-ops, 08-markdown-draft, 00-router]
+
+  - case_id: DRAFT-001
+    language: en
+    critical: true
+    prompt: Draft paper/draft/04_method.md from the observed failure, mechanism, assumptions, formulation, algorithm, and verified implementation. Distinguish hypothesis from established behavior and omit factory/registry/cache details.
+    expected_primary: 08-markdown-draft
+    must_not_trigger: [scientific-brainstorming, method-design, code-change, 03-literature-deep-research, 10-language-polish]
+
+  - case_id: FREEZE-001
+    language: en
+    critical: true
+    prompt: After author confirmation, formalize the stable Markdown manuscript into the sole active TeX source and compile it once; do not create a freeze receipt or hash record.
+    expected_primary: 09-tex-freeze-formalize
+    must_not_trigger: [04-journal-fit, 08-markdown-draft]
+
+  - case_id: POLISH-001
+    language: zh
+    critical: true
+    prompt: 在不改变 claim 强度、数字、引用和技术含义的前提下，把这段已经稳定的英文 Methods 写得更自然简洁。
+    expected_primary: 10-language-polish
+    must_not_trigger: [08-markdown-draft, 11-reference-audit]
+
+  - case_id: POLISH-ANTI-DEFENSIVE-001
+    language: zh
+    critical: true
+    prompt: 去掉这段已经稳定的 Introduction 中重复 caveat、免责声明、想象中的审稿人反驳与叠加 hedge；把必要边界写成正向 scope，完整保留 claim 强度、数字、引用、真实不确定性和局限，只返回修订文本。
+    expected_primary: 10-language-polish
+    must_not_trigger: [05-claim-evidence, 08-markdown-draft, peer-review, 13-reviewer-response]
+
+  - case_id: CITATION-001
+    language: en
+    critical: true
+    prompt: Verify the citations that carry C1 against the original papers, correct the BibTeX and manuscript wording, and report only material support problems.
+    expected_primary: 11-reference-audit
+    must_not_trigger: [03-literature-deep-research, 10-language-polish]
+
+  - case_id: FIGURE-001
+    language: en
+    critical: true
+    prompt: Generate or revise F2 so it communicates the mechanism, actual comparison, uncertainty, and failure boundary; return the editable asset and self-contained caption, not only a manifest row.
+    expected_primary: 15-figure-table-design
+    must_not_trigger: [08-markdown-draft, 10-language-polish, peer-review]
+
+  - case_id: SUBMIT-001
+    language: en
+    critical: true
+    prompt: Prepare the actual submission-ready TeX, PDF, figures, declarations, author metadata, data links, and venue files without submitting them; do not return only a checklist.
+    expected_primary: 12-submission-pack
+    must_not_trigger: [04-journal-fit, 13-reviewer-response, grill-me]
+
+  - case_id: RESPONSE-001
+    language: zh
+    critical: true
+    prompt: 处理编辑和三位审稿人的真实意见：先完成所需实验、理论、分析或正文修改，若新证据否定原 claim 就更新 claim，然后写 point-by-point response；不要只建立 response matrix。
+    expected_primary: 13-reviewer-response
+    must_not_trigger: [07-experiment-audit, 12-submission-pack, peer-review]
+
+  - case_id: SAFETY-001
+    language: en
+    critical: true
+    prompt: Perform a safety-only decision before using a paid external API and a remote GPU with restricted data; do not execute the operation.
+    expected_primary: 14-agent-safety
+    must_not_trigger: [06-experiment-ops, 00-router]
+
+  - case_id: EVOLVE-001
+    language: en
+    critical: true
+    prompt: Review one verified upstream change, apply the research-value and Occam filters, and implement the smallest useful PaperTrace change without importing a second workflow tree or audit system.
+    expected_primary: repository-self-evolution
+    must_not_trigger: [00-router, scientific-brainstorming, 08-markdown-draft]
+
+  - case_id: GRILL-001
+    language: zh
+    critical: true
+    prompt: /grill-me 严厉盘问这个机制假设，一次只问一个决策问题，每题给出你推荐的答案；不要写文件或执行实验。
+    expected_primary: grill-me
+    must_not_trigger: [00-router, 02-research-question, 06-experiment-ops]
+
+  - case_id: GRILL-002
+    language: en
+    critical: true
+    prompt: Grill this benchmark design relentlessly before I approve it. Ask one question at a time, recommend an answer, inspect repository facts when available, and do not enact the plan.
+    expected_primary: grill-me
+    must_not_trigger: [00-router, 07-experiment-audit, 12-submission-pack]
+
+  - case_id: NONE-001
+    language: zh
+    critical: false
+    prompt: 把“明天下午三点见”翻译成英文。
+    expected_primary: none
+    must_not_trigger: [10-language-polish, 00-router, scientific-brainstorming, grill-me]
+
+  - case_id: NONE-002
+    language: en
+    critical: false
+    prompt: Explain what a Python dictionary is with a two-line example.
+    expected_primary: none
+    must_not_trigger: [hypothesis-generation, method-design, code-change, code-module-xray, repository-self-evolution, 06-experiment-ops, grill-me]
+
+  - case_id: NONE-003
+    language: en
+    critical: false
+    prompt: Summarize the risks in this plan without asking me questions.
+    expected_primary: none
+    must_not_trigger: [grill-me, 00-router, 07-experiment-audit]

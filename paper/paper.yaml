@@ -1,0 +1,80 @@
+# PaperTrace 当前研究状态。键名、路径、ID 和受控枚举保持英文。
+# 未知信息保留为 TODO/unknown；不要为了模板完整而猜测。
+schema_version: 1
+
+project_name: TODO
+paper_title: TODO
+short_title: TODO
+language: English
+
+# idea | outline | markdown_draft | tex_formalization | submission_ready |
+# submitted | revision | accepted
+paper_stage: idea
+active_source: markdown  # markdown | tex
+
+draft_source:
+  path: paper/draft/main.md
+
+formal_source:
+  path: paper/tex/main.tex
+
+# Markdown -> TeX 是单向正式化动作，因此保留一次明确确认。
+freeze:
+  frozen: false
+
+# 选择成为论文 authority 的方向是作者决策；idea 探索本身不需要审批。
+# 这是方向批准的唯一机器状态。
+idea_selection:
+  selected_idea_id: TODO
+  approved: false
+  approved_by: []
+  approved_at: TODO
+
+# Q = (Object, Environment, Observation, Task, Failure, Desired understanding)
+problem_definition:
+  object: TODO
+  environment: TODO
+  observation: TODO
+  task_or_decision: TODO
+  failure_or_contradiction: TODO
+  desired_understanding: TODO
+
+# 当前态唯一真源。intake 只用于首次输入，logs 只记录历史决策。
+research_state:
+  central_question: TODO
+  current_claim_at_risk: TODO
+  strongest_support: TODO
+  favored_explanation: TODO
+  strongest_competing_explanation: TODO
+  largest_unresolved_uncertainty: TODO
+  current_novelty_risk: TODO
+  most_informative_next_action: TODO
+  possible_outcomes_and_decisions: TODO
+  stopping_condition: TODO
+
+# idea 阶段允许为空。只有形成正式主张后才添加条目。
+main_claims: []
+main_contributions: []
+required_experiments: []
+
+# 以下路径按需创建；不存在不表示验证失败。
+artifacts:
+  method_spec: paper/method/method_spec.yaml
+  figures: paper/assets/figures/
+  tables: paper/assets/tables/
+  bibliography: paper/refs/references.bib
+  evidence_matrix: paper/experiments/evidence_matrix.md
+  run_ledger: paper/experiments/run_ledger.md
+  research_log: paper/logs/research_log.md
+  paper_log: paper/logs/paper_log.md
+
+# 投稿准备时再填写；早期研究不需要占位作者或合规声明。
+target_venue: {}
+authors: []
+compliance: {}
+
+# 只保留两个不可逆或对外动作的人工确认。
+# Agent 不得自行把字段改为 true。
+human_gates:
+  markdown_freeze_approved: false
+  submission_approved_by_all_authors: false

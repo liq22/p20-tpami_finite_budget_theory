@@ -1,0 +1,54 @@
+# OS and editors
+.DS_Store
+Thumbs.db
+*.swp
+*.swo
+.vscode/
+.idea/
+
+# Python
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.venv/
+venv/
+
+# PaperTrace machine-local setup
+.papertrace/
+
+# Secrets and local environments
+.env
+.env.*
+!.env.example
+secrets.*
+*.pem
+*.key
+
+# Experiment outputs
+src/outputs/
+src/checkpoints/
+src/wandb/
+
+# TeX build products
+paper/tex/build/
+*.aux
+*.bbl
+*.bcf
+*.blg
+*.fdb_latexmk
+*.fls
+*.log
+*.out
+*.run.xml
+*.synctex.gz
+*.toc
+
+# Obsidian is optional and machine-local
+obsidian/plugins/
+obsidian/.obsidian/
+obsidian/.trash/
+
+# Skill port staging
+.agent/.staging/

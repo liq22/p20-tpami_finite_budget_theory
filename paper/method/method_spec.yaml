@@ -1,0 +1,53 @@
+schema_version: 1
+
+# 方法设计首先回答 failure、竞争解释和可证伪性。
+# 核心机制和决定性比较明确后设为 ready。
+method_id: METH-001
+status: draft  # draft | ready
+
+origin:
+  type: direct_problem  # promoted_idea | direct_problem
+  source_idea_id: TODO
+
+# 正式 claim 尚未建立时可以为空。
+supports_claims: []
+
+failure:
+  observed_failure_or_contradiction: TODO
+  why_it_matters: TODO
+  favored_explanation: TODO
+  strongest_competing_explanation: TODO
+
+scientific_job:
+  research_question: TODO
+  target_decision: TODO
+  unit_of_analysis: TODO
+  input_object: TODO
+  output_object: TODO
+  operating_regime: TODO
+
+mechanism:
+  changed_object: TODO
+  minimal_intervention: TODO
+  # hypothesis | analysis | proposition
+  theory_status: hypothesis
+  assumptions: []
+  testable_implication: TODO
+  expected_signature: TODO
+  rejection_signature: TODO
+  boundary_signature: TODO
+
+# 非模块化方法可以为空；只有存在真实组件时才添加 MC-* 条目。
+components: []
+
+evaluation_contract:
+  decisive_comparison: TODO
+  baseline_fairness: TODO
+  primary_metric: TODO
+  property_metric: TODO
+  boundary_test: TODO
+
+implementation_notes:
+  source_modules: []
+  config_paths: []
+  reproducibility_notes: []
