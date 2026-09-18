@@ -66,6 +66,8 @@ def main():
     parser.add_argument('--steps',type=int,default=80)
     parser.add_argument('--ridge',type=float,default=1e-4)
     parser.add_argument('--learning-rate',type=float,default=0.04)
+    parser.add_argument('--aggregation',choices=('mean','worst_group'),default='mean',
+                        help='unit aggregation for both training and candidate selection')
     args=parser.parse_args()
     if args.output.exists():
         parser.error('output path exists; choose a new experiment directory')
@@ -87,9 +89,14 @@ def main():
         parser.error('training and selection must contain the same development groups')
     args.output.mkdir(parents=True)
     # Failures leave a visible directory without a completed summary.
-    candidates,history=train_basis(train,k=args.k,ridge=args.ridge,steps=args.steps,
-        learning_rate=args.learning_rate,checkpoint_every=max(1,args.steps//8))
-    A,index,selection_values=select_basis(candidates,select,k=args.k,ridge=args.ridge)
+    candidates,history=train_basis(
+        train,k=args.k,ridge=args.ridge,steps=args.steps,
+        learning_rate=args.learning_rate,checkpoint_every=max(1,args.steps//8),
+        aggregation=args.aggregation,
+    )
+    A,index,selection_values=select_basis(
+        candidates,select,k=args.k,ridge=args.ridge,aggregation=args.aggregation,
+    )
     q,_=torch.linalg.qr(torch.randn(p,p,dtype=torch.float64))
     t=torch.arange(p,dtype=torch.float64)
     dct=torch.cos(torch.pi/p*(t[None,:]+0.5)*t[:,None])*np.sqrt(2/p)
@@ -109,9 +116,10 @@ def main():
         writer=csv.DictWriter(f,fieldnames=list(rows[0]));writer.writeheader();writer.writerows(rows)
     np.savez(args.output/'basis.npz',basis=A.cpu().numpy(),candidate_index=index)
     result={'evidence_kind':'synthetic_only' if args.synthetic else 'user_supplied_fixed_responses',
-            'seed':args.seed,'features':p,'k':args.k,'fit_queries':test.fit_v.shape[1],
+            'seed':args.seed,'features':p,'k':args.k,'aggregation':args.aggregation,
+            'fit_queries':test.fit_v.shape[1],
             'score_queries':test.score_v.shape[1],'ridge':args.ridge,'optimization_steps':args.steps,
-            'selection_index':index,'selection_worst_excess':selection_values,
+            'selection_index':index,'selection_aggregate_excess':selection_values,
             'development_objectives':history,'predictor_access':calls,
             'orthogonality_error':float((A@A.T-torch.eye(p,dtype=A.dtype)).abs().max()),
             'independent_test_results':summary,

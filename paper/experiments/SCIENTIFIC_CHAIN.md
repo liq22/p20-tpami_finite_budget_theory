@@ -3,7 +3,7 @@
 | Contribution | Positive prior boundary | Precise question | Figure object | Mechanism / algorithm step | Contrast and metric | Evidence and decision |
 |---|---|---|---|---|---|---|
 | C1: budgeted coordinate geometry | Infidelity supplies quadratic response loss; sparse/dictionary theory supplies support classes | Which term changes under fixed response semantics? | Fixed response; candidate/union dictionaries | Moments; oracle support solution; fitted-support decomposition | Exact versus fitted risk; full-budget/singular/anisotropic controls | Analytic derivation and numerical tests. Do not call the least-squares identity novel |
-| C2: shared-coordinate response objective | TRIM/AWD change explanatory coordinates; task-driven dictionaries use outer objectives | Does actual finite-query response training add value over matched objectives? | Shared family and fixed k,Q | OMP-ridge inner solve; fresh-within-training outer score; independent selection | Response versus reconstruction/sparsity objective with common family and budget; unit MSE | Implementation/reference tests exist. Real-data benefit unresolved |
+| C2: shared-coordinate response objective | TRIM/AWD, transformed-domain PHM SHAP, task-driven dictionaries and query-efficient explanation already cover coordinate changes, outer objectives and black-box access | Does actual finite-query response training add value beyond non-degenerate matched transform objectives? | Shared orthogonal family and fixed k,Q | OMP-ridge inner solve; fresh response score; explicit mean aggregation; independent selection | Response versus best-k reconstruction versus attribution-tail objective; same family/split/aggregation; structured-support controls; paired unit MSE | Full reconstruction and L2 attribution controls are proven degenerate; linear-isotropic oracle equivalence is explicit. Real-data benefit unresolved |
 | C3: information-matched containment | Structured sparsity and REAL-X/FastSHAP already motivate structure and confound controls | Does a route beat a same-information union class or merely one solver? | Routed block; zero-padded union equality | Same rule, descriptor and Q transcript; independent union multiplication | Max prediction discrepancy; plain-union and shuffled-descriptor unit MSE | Exact zero discrepancy; synthetic plain-union gap not a routing-class advantage |
 
 ## Frozen controlled experiment
@@ -26,14 +26,23 @@ budgets. These are executed observations, not expected values or population rate
 
 ## Remaining decisive test
 
-Freeze a real predictor and independent-unit data. Use identical response arrays,
-development information and budgets for shared response-trained coordinates,
-reconstruction-trained coordinates, interpretation-sparsity coordinates and
-structured support controls. Preserve faithful original TRIM/AWD comparisons
-separately from matched-family adaptations. Test against the best selected single
-basis, plain union and an information-matched structured union. Record offline
+Freeze a real predictor and independent-unit data. Materialize one matched table
+containing each anchor input, its construction displacements/responses and fresh
+scoring displacements/responses. Under one orthogonal family, one $k$, one
+development split, one mean aggregation and one selection rule, compare:
+response-trained coordinates; best-$k$ sparse-reconstruction coordinates; and
+best-$k$ attribution-tail coordinates whose dense response vector is estimated
+from the declared development table. Full reconstruction and L2 attribution
+magnitude are prohibited controls because orthogonality makes them invariant.
+
+Then test the selected response basis against the best fixed single basis, plain
+union and a prespecified structured/block union. Preserve faithful original
+TRIM/AWD and task-driven-dictionary comparisons separately from matched-family
+adaptations because their native objectives and access differ. Record offline
 queries, online queries and actual compute separately. A null result narrows or
-rejects C2; it must not be hidden by a larger architecture or a different test set.
+rejects C2; it must not be hidden by a larger architecture, different aggregation,
+router, intervention law or test set. The complete protocol is
+`paper/experiments/RESPONSE_OBJECTIVE_FALSIFICATION.md`.
 
 The paper's E1–E6 name scientific contrasts, not already implemented benchmark
 adapters. PHMFactory, external native readers and faithful SOTA reproduction remain
