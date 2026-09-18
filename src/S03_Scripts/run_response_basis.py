@@ -119,7 +119,7 @@ def main():
             'seed':args.seed,'features':p,'k':args.k,'aggregation':args.aggregation,
             'fit_queries':test.fit_v.shape[1],
             'score_queries':test.score_v.shape[1],'ridge':args.ridge,'optimization_steps':args.steps,
-            'selection_index':index,'selection_worst_excess':selection_values,
+            'selection_index':index,'selection_aggregate_excess':selection_values,
             'development_objectives':history,'predictor_access':calls,
             'orthogonality_error':float((A@A.T-torch.eye(p,dtype=A.dtype)).abs().max()),
             'independent_test_results':summary,
