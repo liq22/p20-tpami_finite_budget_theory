@@ -202,6 +202,27 @@ predictor verification
 → scientific decision
 ```
 
+### Current CWRU acquisition path
+
+The currently inspected PHMFactory `main` exposes a public
+`cwru-demo-v1` bundle containing `metadata.xlsx` and
+`RM_001_CWRU.h5`, with explicit Id-to-signal validation. That path is suitable
+for acquiring and validating the first PHM dataset without modifying PHMFactory.
+
+The shipped CWRU quickstart trains a predictor for one CPU epoch at execution
+time and the repository does not provide a frozen P20-ready checkpoint.
+Therefore the quickstart result is **not** the fixed predictor for this
+experiment. The local execution must first train or select one predictor using
+only the declared training/validation units, freeze its checkpoint and verify
+its labels, split and diagnostic metric. Only then may it materialize the
+response table. The P20 repository consumes the frozen responses; PHMFactory
+must not depend on P20.
+
+For the dense orthogonal reference, keep the explanatory coordinate dimension
+at most 256. If the diagnostic model consumes a longer or multichannel signal,
+freeze a deterministic reshape/reduced interface before collecting responses;
+do not learn a P20-specific front end jointly with the explanation basis.
+
 Do not expand to HAR, PAMAP2, PTB-XL, Sleep-EDF or forecasting until this pilot
 shows that M4 has independent value.
 
