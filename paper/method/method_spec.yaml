@@ -8,8 +8,8 @@ supports_claims: [C1, C2, C3]
 failure:
   observed_failure_or_contradiction: A routed estimator beats plain union-OMP but is exactly reproduced by an information-matched union.
   why_it_matters: Finite query advantages do not identify an intrinsic routing-class benefit.
-  favored_explanation: Coordinate approximation and estimator search/conditioning effects are coupled.
-  strongest_competing_explanation: Context-conditioned support selection explains the apparent representation gain.
+  favored_explanation: Response-specific coordinates can matter when nonlinear, anisotropic or finite-query estimator terms break the linear-isotropic attribution-tail equivalence.
+  strongest_competing_explanation: Attribution-tail sparsity already captures the coordinate oracle, or structured support selection explains the finite-Q gain.
 scientific_job:
   research_question: Under identical response semantics and information, when does a shared coordinate basis improve the actual finite-query decoder?
   target_decision: Select a shared explanatory basis or retain identity.
@@ -19,21 +19,21 @@ scientific_job:
   operating_regime: Fixed predictor, target, original intervention law and independent train/select/test units.
 mechanism:
   changed_object: Shared explanatory coordinates; predictor unchanged.
-  minimal_intervention: Train the basis through fresh-within-training response error of OMP-ridge.
+  minimal_intervention: Train the basis through mean fresh-within-training response error of OMP-ridge; change aggregation only as a common ablation.
   theory_status: analysis
   assumptions: [Finite second moments, Common information, Fixed per-explanation gate, Independent scoring]
-  testable_implication: Any same-information route can be embedded into the fixed union without additional model queries.
-  expected_signature: Exact route/emulator prediction agreement; objective gains require independent tests.
+  testable_implication: In the linear-isotropic population limit attribution-tail equals the coordinate oracle; outside that limit response training must beat non-degenerate matched objectives to show independent value.
+  expected_signature: Exact route/emulator agreement plus held-out PHM response-MSE reduction over sparse-reconstruction and attribution-tail controls under the same aggregation.
   rejection_signature: Shared-basis benefit disappears against matched objectives and structured-support controls.
   boundary_signature: Nonlinear decoder changes and gate access to scoring displacements leave the stated class.
 components: []
 evaluation_contract:
-  decisive_comparison: Response-trained basis versus matched reconstruction/sparsity objectives; route versus same-information union.
-  baseline_fairness: Same predictor, target, intervention law, k, Q, development access and descriptor.
+  decisive_comparison: Response-trained basis versus best-k sparse-reconstruction and attribution-tail objectives; then versus structured support controls.
+  baseline_fairness: Same predictor, target, intervention law, k, Q, development units, response table, aggregation and candidate-selection split.
   primary_metric: Independent-unit fresh response MSE.
   property_metric: Maximum absolute route/emulator prediction difference.
   boundary_test: Singular moments, full budget, descriptor shuffle and query sweeps.
 implementation_notes:
-  source_modules: [src/S01_Package/response_basis.py, experiments/p19/comparators.py]
+  source_modules: [src/S01_Package/response_basis.py, src/S01_Package/objective_controls.py, experiments/p19/comparators.py]
   config_paths: []
   reproducibility_notes: [Run experiments/p19/toy.py with explicit output; retain negative controls.]
