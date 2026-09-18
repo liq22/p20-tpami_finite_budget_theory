@@ -114,11 +114,18 @@ unless it survives the same-information containment control.
 
 ### Tier C: faithful prior methods
 
-When feasible, keep faithful TRIM, Adaptive Wavelet Distillation, and a
-task-driven dictionary baseline separate from Tier A. Preserve their native
-objectives and report any unavoidable difference in model access or offline
-training. Do not silently rewrite them into the proposed method's coordinate
-family.
+Keep faithful TRIM, Adaptive Wavelet Distillation, and a task-driven dictionary
+baseline separate from Tier A when the required model access is compatible.
+For time-series tasks, also include recent temporal explainers such as ContraLSP,
+TimeX++, and TIMING when their native problem definition applies. Preserve each
+method's native objective and report unavoidable differences in model access,
+offline training, perturbation semantics, and output object. Do not silently
+rewrite a mask, information-bottleneck explanation, or path attribution into the
+proposed coordinate family merely to force a common implementation.
+
+Tier C serves external validity rather than the primary matched-family estimand.
+Report native explanation metrics where meaningful, in addition to response MSE
+only when a mathematically justified response-decoder adaptation exists.
 
 ## Budget grid
 
@@ -129,8 +136,12 @@ The minimum confirmatory grid is
   query-limited regime;
 - one fixed ridge rule selected without final-test access.
 
-A method claim must not depend on one cherry-picked (k,Q) pair. The paper may
-summarize one primary pair only if it was declared before final-test inspection.
+A method claim must not depend on one cherry-picked (k,Q) pair. Freeze one
+primary (k,Q) pair and one primary matched-family reference using development
+units only before opening final-test outcomes. Treat the remaining grid as
+prespecified secondary analyses. If inferential claims are made separately at
+multiple grid points, report multiplicity control or simultaneous uncertainty
+rather than selecting significant cells after inspection.
 
 ## Attribution diagnostics
 
@@ -144,7 +155,36 @@ For each method and (k,Q), decompose or estimate:
 4. final finite-Q response MSE.
 
 These diagnostics are mechanism evidence. Only item 4 is the primary empirical
-endpoint.
+endpoint for the fixed-response claim.
+
+## Metric and semantic boundary
+
+Response MSE does not by itself establish generic explanation quality. On
+synthetic tasks with known salient regions, also report a prespecified
+ground-truth localization metric. On real time-series tasks, retain compatible
+native metrics used by the strongest temporal explainers; for signed temporal
+attributions, CPD/CPP-style diagnostics are relevant when their attribution
+semantics apply. Do not compare incomparable metrics by ranking their raw values.
+
+The primary intervention law is part of the estimand. Before submission, repeat
+the central comparison under at least one prespecified scientifically reasonable
+alternative law, or explicitly restrict the claim to the single declared law.
+An intervention-sensitivity reversal is a boundary result, not a failed run.
+
+## Robustness and computational boundary
+
+If meaningful group labels are unavailable before explanation fitting, use one
+group rather than inventing post-hoc groups. If group-wise optimization is used,
+compare it with mean-risk training to show whether the claimed gain comes from
+the coordinate objective or from a group-DRO choice.
+
+The dense matrix-exponential reference is cubic in coordinate dimension and is
+currently limited to p<=256. Report feature dimension, offline training time,
+online fitting time, peak memory, and all scalar model queries. Do not claim
+scalability to long raw sequences without either a structured orthogonal
+parameterization or direct evidence in the target dimensions. Hyperparameter
+selection for ridge, optimization steps, learning rate, k and Q must use
+development units only.
 
 ## Minimum real experiment
 
@@ -185,4 +225,7 @@ test split to recover the claim.
 Only after the first real experiment supports a stable effect, extend to
 multiple external time-series families. Each added family must preserve the same
 scientific contract even if the native predictor architecture and physical
-meaning of a unit differ.
+meaning of a unit differ. The final TPAMI evidence should also test whether the
+effect survives predictor initialization or architecture changes; one frozen
+checkpoint is sufficient for the first falsification experiment, not for a broad
+model-independent claim.

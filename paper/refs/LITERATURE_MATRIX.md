@@ -40,7 +40,7 @@ The last column states a comparison needed by P20. It is not an assertion that t
 | Janzing et al., AISTATS 2020 `janzing2020` | Causal versus conditional feature relevance | Marginal intervention versus conditional distribution | Formal dependence examples, including unused correlated features | Fix the intended dependence question; no physical-causality conclusion from response fidelity alone | [Full text](https://proceedings.mlr.press/v108/janzing20a/janzing20a.pdf), Sec. 2–3 |
 | Frye et al., ICLR 2021 `frye2021` | Shapley explanations restricted to the data manifold | Conditional value function, generative or supervised estimation | Correlation/manifold examples and learned-value-function evaluations | Positive alternative to marginal interventions; choose according to the estimand, not favorable scores | [Full text](https://arxiv.org/pdf/2006.01272), Sec. 3–4 |
 
-## Additional sources, not included in the 33 body-read count
+## Additional sources, not included in the 33 core body-read count
 
 | Work | Use | Reading boundary |
 |---|---|---|
@@ -48,6 +48,9 @@ The last column states a comparison needed by P20. It is not an assertion that t
 | Hoeffding 1963 `hoeffding1963` | Bounded independent-unit concentration; DOI 10.1080/01621459.1963.10500830 | Standard theorem used with a direct proof specialization; no new full-paper reading claimed |
 | Dhurandhar et al., ANS, NeurIPS 2022 `dhurandhar2022ans` | Explicit positive precedent for adaptive neighborhood query efficiency | Official proceedings abstract read; full PDF retrieval failed. No negative full-text exclusion or detailed theorem comparison is made |
 | Yue et al., ORTE, ICML 2025 `yue2025orte` | Explicit positive precedent for information-retention temporal masks | Official PMLR record and abstract read; full PDF unavailable through attempted endpoints. Detailed equivalence screening remains open |
+| Liu et al., ContraLSP, ICLR 2024 `liu2024contralsp` | In-domain counterfactual perturbations, sample-specific sparse gates, temporal smoothing, and time-series explanation benchmarks | Original full text screened through method and experiment sections (Secs. 4–5). It changes the perturbation/mask object rather than learning one shared linear response coordinate basis; retain as a strong recent temporal-XAI baseline |
+| Liu et al., TimeX++, ICML 2024 `liu2024timexpp` | Information-bottleneck explanation learning with in-distribution, label-preserving explanation-embedded instances | Official PMLR record/abstract inspected in this round. Use only its positively stated method/evaluation scope until detailed full-text equivalence screening is completed |
+| Jang et al., TIMING, ICML 2025 `jang2025timing` | Temporality-aware Integrated Gradients and CPD/CPP metrics for signed temporal attribution | Official PMLR record/abstract inspected in this round. It makes metric adequacy and temporal-path validity direct reviewer concerns; do not infer missing mechanisms from the abstract |
 
 ## Consequence for the gap
 

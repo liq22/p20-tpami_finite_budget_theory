@@ -54,7 +54,7 @@ FastSHAP amortizes a weighted regression objective and explicitly separates bene
 
 ## 2.4 Temporal explanations and evaluation validity
 
-Time-series explanation methods address structure beyond an unordered feature set. Temporal Saliency Rescaling separates temporal and feature importance, DynaMask optimizes sparse masks using temporally informed perturbations, and xCEBRA couples contrastive representation learning with regularized attribution maps [@ismail2020; @crabbe2021dynamask; @schneider2025xcebra]. ORTE frames temporal explanations through information retention and learned binary masks [@yue2025orte]. Their native objectives should be evaluated as such. A mask optimized to retain information is not automatically a linear response decoder, and retraining a representation changes more than the coordinates of a frozen explanatory problem.
+Time-series explanation methods address structure beyond an unordered feature set. Temporal Saliency Rescaling separates temporal and feature importance, DynaMask optimizes sparse masks using temporally informed perturbations, and xCEBRA couples contrastive representation learning with regularized attribution maps [@ismail2020; @crabbe2021dynamask; @schneider2025xcebra]. More recent methods sharpen the comparison further: ContraLSP learns contrastive, in-domain perturbations together with sample-specific sparse gates [@liu2024contralsp]; TimeX++ learns explanation-embedded instances through a modified information-bottleneck objective [@liu2024timexpp]; and TIMING introduces temporality-aware Integrated Gradients together with signed temporal evaluation metrics [@jang2025timing]. ORTE frames temporal explanations through information retention and learned binary masks [@yue2025orte]. Their native objectives should be evaluated as such. A mask optimized to retain information, localization, or signed attribution is not automatically a linear response decoder, and retraining a representation changes more than the coordinates of a frozen explanatory problem. These methods therefore serve both as recent external baselines and as a warning not to relabel response MSE as generic explanation quality.
 
 Meaningful Perturbation distinguishes deletion and preservation objectives and addresses artifacts induced by optimized masks [@fong2017]. ROAR retrains after feature removal to reduce the distribution-shift confound in a different evaluation task [@hooker2019roar]. Randomization tests examine whether explanations depend on learned parameters and labels, while metric-reliability studies examine whether evaluation rankings are stable [@adebayo2018; @tomsett2020]. Adversarial scaffolding can exploit out-of-distribution queries, and systematic time-series studies demonstrate sensitivity to perturbation methods and region sizes [@slack2020; @simic2025]. Together, these studies require us to distinguish response fidelity, robustness of its measurement, and physical or causal interpretation. Improvement in one is not evidence for all three.
 
@@ -110,7 +110,7 @@ The experimental comparisons answer different questions. Identity tests the refe
 
 The central empirical estimand is a paired independent-unit difference in fresh response MSE, conditional on the frozen predictor and selected explanatory mechanism. It is not diagnostic classification error, a training residual, or the expected minimum of noisy test losses. Repeated windows and repeated queries within a bearing, subject, or recording remain nested observations, not independent replications.
 
-The minimal experiment set separates six questions. **E1, geometry:** exact small problems test uncentered and singular moments, full-budget invariance, and helpful or harmful bases. **E2, estimation:** query and support-budget sweeps distinguish oracle approximation from greedy support and coefficient error. **E3, information:** the same-information union and shuffled-descriptor controls test the interpretation of routing gains. **E4, learning objective:** shared coordinates trained on actual response risk are compared with reconstruction- and attribution-sparsity objectives under a common coordinate family, alongside faithful TRIM/AWD and task-driven dictionary comparisons. **E5, generality:** frozen vibration classifiers and independently split inertial, physiological, and forecasting tasks test whether any benefit survives outside constructed sparse directions. **E6, cost and semantics:** development queries, online scalar queries, derivative access, latency, and memory are reported separately; intervention-law sensitivity and interpretable coordinate loadings test the limits of the response conclusion. E4–E6 require new empirical evidence and do not support performance claims here.
+The minimal experiment set separates six questions. **E1, geometry:** exact small problems test uncentered and singular moments, full-budget invariance, and helpful or harmful bases. **E2, estimation:** query and support-budget sweeps distinguish oracle approximation from greedy support and coefficient error. **E3, information:** the same-information union and shuffled-descriptor controls test the interpretation of routing gains. **E4, learning objective:** shared coordinates trained on actual response risk are compared with reconstruction- and attribution-sparsity objectives under a common coordinate family, alongside faithful TRIM/AWD and task-driven dictionary comparisons. **E5, external validity and generality:** frozen vibration classifiers and independently split inertial, physiological, and forecasting tasks test whether any response benefit survives outside constructed sparse directions; recent temporal explainers such as ContraLSP, TimeX++, and TIMING are retained as external references and evaluated with their native explanation metrics where those metrics are compatible with the task. **E6, cost and semantics:** development queries, online scalar queries, derivative access, latency, and memory are reported separately; intervention-law sensitivity and interpretable coordinate loadings test the limits of the response conclusion. E4–E6 require new empirical evidence and do not support performance claims here.
 
 ## 5.1 A controlled nonlinear comparison
 
@@ -127,6 +127,45 @@ The entries are mean response MSE, not results on real time-series benchmarks. A
 
 ## 5.2 Scope of the supported conclusion
 
-The geometry and emulation statements apply under their stated function-class and information assumptions. The synthetic comparison is a falsification control for a broad interpretation of routing, not a validation of shared-coordinate learning across domains. A practical representation claim requires an independent advantage over matched objective and structured-support controls, with the predictor, intervention semantics, and development access held fixed. Physical interpretability additionally requires meaningful coordinate structure or external semantic evidence; sparse response coefficients alone do not supply it.
+The geometry and emulation statements apply under their stated function-class and information assumptions. The synthetic comparison is a falsification control for a broad interpretation of routing, not a validation of shared-coordinate learning across domains. A practical representation claim requires an independent advantage over matched objective and structured-support controls, with the predictor, intervention semantics, and development access held fixed. Physical interpretability additionally requires meaningful coordinate structure or external semantic evidence; sparse response coefficients alone do not supply it. Response MSE is therefore the primary endpoint only for the fixed-response claim; broader claims about temporal explanation quality require compatible localization, preservation, or signed-attribution evidence in addition.
+
+<!--
+INTERNAL ADVERSARIAL SELF-REVIEW — remove before submission.
+Detailed evidence/actions: paper/review/ADVERSARIAL_SELF_REVIEW.md
+
+Contribution
+1. What new knowledge does this paper give? — needs new experiment: C1/C3 are supported; C2 real-data value is unresolved.
+2. Meaningful failure case? — needs revision: motivate finite-budget confounding with one real case, not only the constructed example.
+3. Non-obvious technical idea? — needs new experiment: projection/bilevel learning/structured sparsity are prior art; independent response-objective value must be demonstrated.
+4. Surprising or insightful gain? — needs new experiment: only the routing negative control is currently surprising; no real performance effect exists yet.
+5. Clear novelty type? — needs revision: frame novelty as formulation + falsification boundary + empirically validated response-objective effect, conditional on E4/E5.
+
+Writing Clarity
+1. Reproducible method? — pass for the current reference implementation; real-data adapters/objective-matched baselines remain incomplete.
+2. Enough technical detail? — pass for fixed-response geometry and OMP-ridge; needs revision for reconstruction/sparsity objectives before results are added.
+3. Motivation of every component? — pass: each retained component maps to semantic comparability, finite-budget attribution, or information matching.
+4. Terms and notation consistent? — pass in the current draft; recheck after real-data sections are added.
+5. One message per paragraph / transitions? — pass for Introduction/Related Work; recheck after Results expansion.
+
+Experimental Strength
+1. Meaningful improvement over strong baselines? — needs new experiment.
+2. Competitive absolute performance? — needs new experiment.
+3. Consistent across datasets/settings/metrics? — needs new experiment.
+4. Strengths and failure cases reported? — pass for the current synthetic negative result; needs new experiment for real-data failures.
+
+Evaluation Completeness
+1. Ablations for key choices? — needs new experiment: objective, k, Q, ridge, group objective, coordinate parameterization, support search.
+2. Strong/recent baselines? — needs revision/new experiment: add faithful recent temporal explainers and objective-matched controls.
+3. Metrics standard and sufficient? — needs revision/new experiment: response MSE supports only the fixed-response claim; add compatible native temporal-XAI metrics.
+4. Datasets/scenarios challenging enough? — needs new experiment: the current evidence is synthetic only.
+5. Protocol clearly documented? — pass for the falsification protocol; execute it before submission.
+
+Method Design Soundness
+1. Realistic setting? — needs new experiment: validate intervention law and scalar-query regime on real units.
+2. Hidden technical defects / assumptions? — needs revision: dense SO(p), p<=256, fixed gate before scoring displacement, and group definitions must be explicit.
+3. Robust without per-case tuning? — needs new experiment: predeclare selection and sensitivity across k,Q,ridge and seeds.
+4. Benefits outweigh complexity? — needs new experiment: report offline/online query, runtime and memory costs.
+5. Could net benefit be negative? — needs new experiment: compare against identity, best fixed basis, matched objectives and structured support; preserve null/reversed results.
+-->
 
 # References
