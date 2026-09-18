@@ -142,12 +142,28 @@ def losses(A, batch: ResponseBatch, k: int, ridge: float):
     return torch.stack(values)
 
 
+def aggregate_losses(values, groups, mode: str):
+    """Aggregate per-unit losses without changing the underlying objective."""
+    if values.ndim != 1 or groups.shape != (len(values),):
+        raise ValueError("values and groups must describe the same independent units")
+    if mode == "mean":
+        return values.mean()
+    if mode == "worst_group":
+        unique = torch.unique(groups)
+        if len(unique) == 0:
+            raise ValueError("worst-group aggregation requires at least one group")
+        return torch.stack([values[groups == g].mean() for g in unique]).max()
+    raise ValueError("aggregation must be 'mean' or 'worst_group'")
+
+
 def worst_group(values, groups):
-    return torch.stack([values[groups == g].mean() for g in torch.unique(groups)]).max()
+    """Compatibility wrapper for the explicit worst-group ablation."""
+    return aggregate_losses(values, groups, "worst_group")
 
 
 def train_basis(batch: ResponseBatch, *, k: int, ridge: float, steps: int,
-                learning_rate: float, checkpoint_every: int):
+                learning_rate: float, checkpoint_every: int,
+                aggregation: str = "mean"):
     """Return a frozen finite trajectory; no selection/evaluation data are accepted."""
     if steps < 1 or checkpoint_every < 1 or not math.isfinite(learning_rate) or learning_rate <= 0:
         raise ValueError("steps, checkpoint_every and learning_rate must be positive")
@@ -162,7 +178,11 @@ def train_basis(batch: ResponseBatch, *, k: int, ridge: float, steps: int,
     history = []
     for step in range(1, steps+1):
         optimizer.zero_grad()
-        objective = worst_group(losses(model.matrix(), batch, k, ridge)-reference, batch.groups)
+        objective = aggregate_losses(
+            losses(model.matrix(), batch, k, ridge)-reference,
+            batch.groups,
+            aggregation,
+        )
         if not torch.isfinite(objective):
             raise ValueError("nonfinite development objective; no candidate substituted")
         if not objective.requires_grad:
@@ -175,7 +195,8 @@ def train_basis(batch: ResponseBatch, *, k: int, ridge: float, steps: int,
     return candidates, history
 
 
-def select_basis(candidates: Sequence[torch.Tensor], selection: ResponseBatch, *, k, ridge):
+def select_basis(candidates: Sequence[torch.Tensor], selection: ResponseBatch, *, k, ridge,
+                 aggregation: str = "mean"):
     """Independent minimax selection. Identity must be candidate zero; ties keep it."""
     if not candidates:
         raise ValueError("candidate family must contain identity")
@@ -187,8 +208,11 @@ def select_basis(candidates: Sequence[torch.Tensor], selection: ResponseBatch, *
     with torch.no_grad():
         reference = losses(identity, selection, k, ridge)
         for A in candidates:
-            values.append(float(worst_group(losses(A, selection, k, ridge)-reference,
-                                            selection.groups)))
+            values.append(float(aggregate_losses(
+                losses(A, selection, k, ridge)-reference,
+                selection.groups,
+                aggregation,
+            )))
     index = int(np.argmin(values))
     return candidates[index].detach().clone(), index, values
 
