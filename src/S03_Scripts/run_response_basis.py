@@ -55,6 +55,21 @@ def read_npz(path):
     return batches
 
 
+def fixed_candidates(p, seed, identity, count=8):
+    """Finite non-learned family; selection uses development-select only."""
+    t=torch.arange(p,dtype=torch.float64)
+    dct=torch.cos(torch.pi/p*(t[None,:]+0.5)*t[:,None])*np.sqrt(2/p)
+    dct[0]/=np.sqrt(2)
+    generator=torch.Generator().manual_seed(seed+1000)
+    bases=[identity, dct]
+    names=['identity','dct']
+    for j in range(count):
+        q,_=torch.linalg.qr(torch.randn(p,p,generator=generator,dtype=torch.float64))
+        bases.append(q)
+        names.append(f'random_orthogonal_{j}')
+    return names,bases
+
+
 def main():
     parser=argparse.ArgumentParser(description=__doc__)
     source=parser.add_mutually_exclusive_group(required=True)
@@ -90,11 +105,16 @@ def main():
     candidates,history=train_basis(train,k=args.k,ridge=args.ridge,steps=args.steps,
         learning_rate=args.learning_rate,checkpoint_every=max(1,args.steps//8))
     A,index,selection_values=select_basis(candidates,select,k=args.k,ridge=args.ridge)
-    q,_=torch.linalg.qr(torch.randn(p,p,dtype=torch.float64))
-    t=torch.arange(p,dtype=torch.float64)
-    dct=torch.cos(torch.pi/p*(t[None,:]+0.5)*t[:,None])*np.sqrt(2/p)
-    dct[0]/=np.sqrt(2)
-    methods={'identity':candidates[0], 'dct':dct,'random_orthogonal':q,'learned_selected':A}
+
+    fixed_names,fixed_bases=fixed_candidates(p,args.seed,candidates[0])
+    fixed_A,fixed_index,fixed_selection_values=select_basis(
+        fixed_bases,select,k=args.k,ridge=args.ridge)
+    methods={
+        'identity':candidates[0],
+        'dct':fixed_bases[1],
+        'best_fixed_single':fixed_A,
+        'learned_selected':A,
+    }
     rows=[]; summary={}
     with torch.no_grad():
         for name,basis in methods.items():
@@ -107,16 +127,22 @@ def main():
                              'score_queries':test.score_v.shape[1]})
     with (args.output/'responses.csv').open('w',newline='') as f:
         writer=csv.DictWriter(f,fieldnames=list(rows[0]));writer.writeheader();writer.writerows(rows)
-    np.savez(args.output/'basis.npz',basis=A.cpu().numpy(),candidate_index=index)
+    np.savez(args.output/'basis.npz',basis=A.cpu().numpy(),candidate_index=index,
+             best_fixed_basis=fixed_A.cpu().numpy(),best_fixed_candidate_index=fixed_index)
     result={'evidence_kind':'synthetic_only' if args.synthetic else 'user_supplied_fixed_responses',
             'seed':args.seed,'features':p,'k':args.k,'fit_queries':test.fit_v.shape[1],
             'score_queries':test.score_v.shape[1],'ridge':args.ridge,'optimization_steps':args.steps,
             'selection_index':index,'selection_worst_excess':selection_values,
+            'fixed_candidate_names':fixed_names,
+            'best_fixed_candidate_index':fixed_index,
+            'best_fixed_candidate_name':fixed_names[fixed_index],
+            'fixed_selection_worst_excess':fixed_selection_values,
             'development_objectives':history,'predictor_access':calls,
             'orthogonality_error':float((A@A.T-torch.eye(p,dtype=A.dtype)).abs().max()),
             'independent_test_results':summary,
             'claim_boundary':'No benchmark, physical-validity, global-optimality or distribution-free improvement claim.'}
     (args.output/'summary.json').write_text(json.dumps(result,indent=2)+'\n')
     print(json.dumps({k:v for k,v in result.items() if k!='development_objectives'},indent=2))
+
 
 if __name__=='__main__':main()
