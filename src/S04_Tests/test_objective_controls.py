@@ -57,6 +57,30 @@ class ObjectiveControlTests(unittest.TestCase):
         )[0])
         self.assertAlmostEqual(risk, sigma2 * tail, places=12)
 
+    def test_anisotropic_population_reverses_tail_and_response_ranking(self):
+        theta = 3.0 * np.pi / 8.0
+        A = np.array([
+            [np.cos(theta), np.sin(theta)],
+            [-np.sin(theta), np.cos(theta)],
+        ])
+        beta = np.array([3.0, 3.0])
+        M = np.diag([1000.0, 1.0])
+        b = M @ beta
+        c = float(beta @ b)
+
+        beta_t = torch.tensor(beta[None, :], dtype=torch.float64)
+        tail_identity = float(attribution_tail_losses(self.I, beta_t, 1)[0])
+        tail_rotated = float(attribution_tail_losses(
+            torch.tensor(A, dtype=torch.float64), beta_t, 1
+        )[0])
+        risk_identity = oracle_sparse_risk(M, b, c, np.eye(2), 1)[0]
+        risk_rotated = oracle_sparse_risk(M, b, c, A, 1)[0]
+
+        self.assertLess(tail_rotated, tail_identity)
+        self.assertGreater(risk_rotated, risk_identity)
+        self.assertAlmostEqual(tail_identity, 9.0, places=12)
+        self.assertAlmostEqual(risk_identity, 9.0, places=12)
+
     def test_dense_ridge_matches_direct_batched_solve(self):
         V = torch.tensor(
             [[[1.0, 0.0], [0.0, 1.0], [1.0, 1.0]]],
