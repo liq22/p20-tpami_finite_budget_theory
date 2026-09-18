@@ -1,80 +1,71 @@
-# PaperTrace 当前研究状态。键名、路径、ID 和受控枚举保持英文。
-# 未知信息保留为 TODO/unknown；不要为了模板完整而猜测。
 schema_version: 1
-
-project_name: TODO
-paper_title: TODO
-short_title: TODO
+project_name: P20 finite-budget response geometry
+paper_title: 'When Coordinates Help: Finite-Budget Response Explanations'
+short_title: Fixed-response coordinate budgets
 language: English
-
-# idea | outline | markdown_draft | tex_formalization | submission_ready |
-# submitted | revision | accepted
-paper_stage: idea
-active_source: markdown  # markdown | tex
-
+paper_stage: markdown_draft
+active_source: markdown
 draft_source:
   path: paper/draft/main.md
-
 formal_source:
   path: paper/tex/main.tex
-
-# Markdown -> TeX 是单向正式化动作，因此保留一次明确确认。
 freeze:
   frozen: false
-
-# 选择成为论文 authority 的方向是作者决策；idea 探索本身不需要审批。
-# 这是方向批准的唯一机器状态。
-idea_selection:
-  selected_idea_id: TODO
-  approved: false
-  approved_by: []
-  approved_at: TODO
-
-# Q = (Object, Environment, Observation, Task, Failure, Desired understanding)
 problem_definition:
-  object: TODO
-  environment: TODO
-  observation: TODO
-  task_or_decision: TODO
-  failure_or_contradiction: TODO
-  desired_understanding: TODO
-
-# 当前态唯一真源。intake 只用于首次输入，logs 只记录历史决策。
+  object: Sparse finite-query response explanations of a fixed predictor
+  environment: Common original-space interventions and independent unit splits
+  observation: Scalar target-score differences and declared context
+  task_or_decision: Separate coordinate approximation from search, estimation and information effects
+  failure_or_contradiction: Same-information union emulates every routed decoder at any finite query budget
+  desired_understanding: Conditions for practically useful shared coordinates under matched estimators
 research_state:
-  central_question: TODO
-  current_claim_at_risk: TODO
-  strongest_support: TODO
-  favored_explanation: TODO
-  strongest_competing_explanation: TODO
-  largest_unresolved_uncertainty: TODO
-  current_novelty_risk: TODO
-  most_informative_next_action: TODO
-  possible_outcomes_and_decisions: TODO
-  stopping_condition: TODO
-
-# idea 阶段允许为空。只有形成正式主张后才添加条目。
-main_claims: []
-main_contributions: []
-required_experiments: []
-
-# 以下路径按需创建；不存在不表示验证失败。
+  central_question: When do shared coordinates improve finite-query response prediction under identical semantics and information?
+  current_claim_at_risk: Independent benefit beyond task-driven transforms and structured support selection
+  strongest_support: Conditional geometry and exact emulation; controlled nonlinear negative comparison
+  favored_explanation: Direct finite-query response training may reduce combined approximation and estimation error
+  strongest_competing_explanation: Existing structure priors and development information explain the gain
+  largest_unresolved_uncertainty: Independent real-data benefit under strong matched objectives and cost accounting
+  current_novelty_risk: Projection, learned transforms, bilevel dictionaries and instancewise selection already exist
+  most_informative_next_action: Compare response-trained coordinates against matched objective and structured-support controls
+  possible_outcomes_and_decisions: Retain bounded gains; narrow or reject on null effects
+  stopping_condition: Do not promote performance claims without independent matched evidence
+main_claims:
+  - claim_id: C1
+    text: Fixed-response geometry separates approximation, support search and coefficient estimation
+    status: conditional_derivation
+  - claim_id: C2
+    text: A shared orthogonal basis can optimize held-out-within-training finite-query response error
+    status: implemented_reference_not_real_data_confirmed
+  - claim_id: C3
+    text: Same-information fixed-union coefficients exactly emulate a finite-query routed decoder
+    status: conditional_proof_and_controlled_numerical_check
+main_contributions:
+  - contribution_id: K1
+    text: Budgeted coordinate-comparison formulation and containment boundary
+    supporting_claims: [C1, C3]
+  - contribution_id: K2
+    text: Shared-coordinate response objective with independent candidate selection
+    supporting_claims: [C2]
+  - contribution_id: K3
+    text: Information-matched negative control for interpreting finite-query routing gains
+    supporting_claims: [C3]
+required_experiments:
+  - experiment_id: E1
+    text: Exact geometry and finite-query emulation tests
+    supports_claims: [C1, C3]
+  - experiment_id: E2
+    text: Matched objectives, structured supports and real-data generality
+    supports_claims: [C2]
 artifacts:
-  method_spec: paper/method/method_spec.yaml
-  figures: paper/assets/figures/
-  tables: paper/assets/tables/
   bibliography: paper/refs/references.bib
-  evidence_matrix: paper/experiments/evidence_matrix.md
-  run_ledger: paper/experiments/run_ledger.md
-  research_log: paper/logs/research_log.md
-  paper_log: paper/logs/paper_log.md
-
-# 投稿准备时再填写；早期研究不需要占位作者或合规声明。
-target_venue: {}
+  literature: paper/refs/LITERATURE_MATRIX.md
+  method_spec: paper/method/method_spec.yaml
+  scientific_chain: paper/experiments/SCIENTIFIC_CHAIN.md
+  figures: paper/assets/figures/
+target_venue:
+  name: IEEE Transactions on Pattern Analysis and Machine Intelligence
 authors: []
 compliance: {}
-
-# 只保留两个不可逆或对外动作的人工确认。
-# Agent 不得自行把字段改为 true。
 human_gates:
   markdown_freeze_approved: false
   submission_approved_by_all_authors: false

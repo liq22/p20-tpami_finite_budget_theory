@@ -3,7 +3,7 @@ name: quality-gates
 on:
   pull_request:
   push:
-    branches: [master]
+    branches: [master, dev]
 
 permissions:
   contents: read
@@ -16,35 +16,69 @@ jobs:
   validation:
     runs-on: ubuntu-latest
     timeout-minutes: 15
-
     steps:
       - name: Check out repository
         uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0
         with:
           fetch-depth: 1
           submodules: false
-
       - name: Set up Python
         uses: actions/setup-python@ece7cb06caefa5fff74198d8649806c4678c61a1
         with:
           python-version: "3.12"
-
-      - name: Install validation dependencies
-        run: python -m pip install --disable-pip-version-check -r requirements-dev.txt
-
+      - name: Install validation and scientific dependencies
+        run: |
+          python -m pip install --disable-pip-version-check -r requirements-dev.txt
+          python -m pip install --index-url https://download.pytorch.org/whl/cpu 'torch>=2.2,<3'
+          python -m pip install -r requirements-research.txt
       - name: Check optional ARIS integration in Core mode
         run: python scripts/check_aris_backend.py --profile core
-
       - name: Validate active source and present scientific records
         run: python src/S03_Scripts/validate_project.py
-
       - name: Validate routeable Skills and host wrappers
         run: |
           python .agent/scripts/validate_agent_skills.py --skills-dir .agent/skills
           python .agent/scripts/validate_agent_skill_wrappers.py
-
       - name: Validate routing and product case definitions (no host execution)
         run: python .agent/scripts/validate_skill_evals.py
-
       - name: Run repository tests once
         run: python -m unittest discover -s src/S04_Tests -v
+      - name: Exercise the actual controlled-study entry
+        run: python experiments/p19/toy.py --output /tmp/p20-control
+  manuscript:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0
+      - uses: actions/setup-python@ece7cb06caefa5fff74198d8649806c4678c61a1
+        with:
+          python-version: "3.12"
+      - name: Install document tools
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y --no-install-recommends pandoc texlive-xetex texlive-latex-extra fonts-dejavu-core
+          python -m pip install cairosvg
+      - name: Build figures and reading manuscript
+        run: bash scripts/build_paper.sh build/p20
+      - name: Check regenerated SVG and whitespace
+        run: |
+          git diff --exit-code -- paper/assets/figures/motivation.svg
+          git diff --check
+      - name: Check references and editable vector objects
+        run: |
+          work=$(mktemp -d)
+          trap 'rm -rf "$work"' EXIT
+          grep -oE '@[[:alnum:]_:-]+' paper/draft/main.md | cut -c2- | sort -u > "$work/cited"
+          sed -nE 's/^@[^{]+\{([^,]+),.*/\1/p' paper/refs/references.bib | sort -u > "$work/defined"
+          diff -u "$work/defined" "$work/cited"
+          python - <<'PY'
+          from pathlib import Path
+          import xml.etree.ElementTree as ET
+          path = Path('paper/assets/figures/motivation.svg')
+          text = path.read_text()
+          root = ET.fromstring(text)
+          tags = [e.tag.rsplit('}', 1)[-1] for e in root.iter()]
+          assert tags.count('text') >= 20 and tags.count('rect') >= 3
+          assert 'image' not in tags and 'base64' not in text
+          print('Reference keys and independently editable SVG objects verified.')
+          PY

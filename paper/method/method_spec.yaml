@@ -1,53 +1,39 @@
 schema_version: 1
-
-# 方法设计首先回答 failure、竞争解释和可证伪性。
-# 核心机制和决定性比较明确后设为 ready。
 method_id: METH-001
-status: draft  # draft | ready
-
+status: draft
 origin:
-  type: direct_problem  # promoted_idea | direct_problem
-  source_idea_id: TODO
-
-# 正式 claim 尚未建立时可以为空。
-supports_claims: []
-
+  type: direct_problem
+  source_idea_id: unknown
+supports_claims: [C1, C2, C3]
 failure:
-  observed_failure_or_contradiction: TODO
-  why_it_matters: TODO
-  favored_explanation: TODO
-  strongest_competing_explanation: TODO
-
+  observed_failure_or_contradiction: A routed estimator beats plain union-OMP but is exactly reproduced by an information-matched union.
+  why_it_matters: Finite query advantages do not identify an intrinsic routing-class benefit.
+  favored_explanation: Coordinate approximation and estimator search/conditioning effects are coupled.
+  strongest_competing_explanation: Context-conditioned support selection explains the apparent representation gain.
 scientific_job:
-  research_question: TODO
-  target_decision: TODO
-  unit_of_analysis: TODO
-  input_object: TODO
-  output_object: TODO
-  operating_regime: TODO
-
+  research_question: Under identical response semantics and information, when does a shared coordinate basis improve the actual finite-query decoder?
+  target_decision: Select a shared explanatory basis or retain identity.
+  unit_of_analysis: Independent input unit with nested construction and scoring displacements.
+  input_object: Fixed-response arrays, candidate coordinates, unit groups and explicit query budgets.
+  output_object: One shared orthogonal basis and sparse response coefficients.
+  operating_regime: Fixed predictor, target, original intervention law and independent train/select/test units.
 mechanism:
-  changed_object: TODO
-  minimal_intervention: TODO
-  # hypothesis | analysis | proposition
-  theory_status: hypothesis
-  assumptions: []
-  testable_implication: TODO
-  expected_signature: TODO
-  rejection_signature: TODO
-  boundary_signature: TODO
-
-# 非模块化方法可以为空；只有存在真实组件时才添加 MC-* 条目。
+  changed_object: Shared explanatory coordinates; predictor unchanged.
+  minimal_intervention: Train the basis through fresh-within-training response error of OMP-ridge.
+  theory_status: analysis
+  assumptions: [Finite second moments, Common information, Fixed per-explanation gate, Independent scoring]
+  testable_implication: Any same-information route can be embedded into the fixed union without additional model queries.
+  expected_signature: Exact route/emulator prediction agreement; objective gains require independent tests.
+  rejection_signature: Shared-basis benefit disappears against matched objectives and structured-support controls.
+  boundary_signature: Nonlinear decoder changes and gate access to scoring displacements leave the stated class.
 components: []
-
 evaluation_contract:
-  decisive_comparison: TODO
-  baseline_fairness: TODO
-  primary_metric: TODO
-  property_metric: TODO
-  boundary_test: TODO
-
+  decisive_comparison: Response-trained basis versus matched reconstruction/sparsity objectives; route versus same-information union.
+  baseline_fairness: Same predictor, target, intervention law, k, Q, development access and descriptor.
+  primary_metric: Independent-unit fresh response MSE.
+  property_metric: Maximum absolute route/emulator prediction difference.
+  boundary_test: Singular moments, full budget, descriptor shuffle and query sweeps.
 implementation_notes:
-  source_modules: []
+  source_modules: [src/S01_Package/response_basis.py, experiments/p19/comparators.py]
   config_paths: []
-  reproducibility_notes: []
+  reproducibility_notes: [Run experiments/p19/toy.py with explicit output; retain negative controls.]
