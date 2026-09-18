@@ -49,6 +49,13 @@ The last column states a comparison needed by P20. It is not an assertion that t
 | Dhurandhar et al., ANS, NeurIPS 2022 `dhurandhar2022ans` | Explicit positive precedent for adaptive neighborhood query efficiency | Official proceedings abstract read; full PDF retrieval failed. No negative full-text exclusion or detailed theorem comparison is made |
 | Yue et al., ORTE, ICML 2025 `yue2025orte` | Explicit positive precedent for information-retention temporal masks | Official PMLR record and abstract read; full PDF unavailable through attempted endpoints. Detailed equivalence screening remains open |
 
+
+| Herwig and Borghesani, MSSP 2023 `herwig2023raw` | Direct PHM predecessor: keep a raw time-domain diagnostic network while computing SHAP explanations in frequency or time--frequency coordinates with discretisation | Publisher abstract/highlights and publication metadata reviewed in this round; do not claim a full-text exclusion |
+| Chen et al., CS-SHAP, MSSP 2026 `chen2026csshap` | Recent direct PHM predecessor for cyclic-spectral transformed-domain SHAP | Publisher abstract/highlights and arXiv record reviewed; establishes that transformed-domain PHM explanation itself is not the gap |
+| Chen et al., SHEP, EAAI 2026 `chen2026shep` | Recent PHM precedent for lowering the computational cost of transformed-domain Shapley attribution | Publisher abstract and official code metadata reviewed; query/computational efficiency is not sufficient novelty |
+| Cai and Wunder, GEEX, ICML 2024 `cai2024geex` | Query-only construction of gradient-like explanations under black-box access | Official PMLR abstract/metadata reviewed; black-box query access alone is not the gap |
+| Jang et al., TIMING, ICML 2025 `jang2025timing` | Time-series attribution metrics can miss directional effects; temporal paths can introduce OOD samples | Official PMLR abstract/metadata reviewed; reinforces that response fidelity is one declared estimand, not a universal time-series explanation metric |
+
 ## Consequence for the gap
 
 Response fidelity, learned transforms, task-driven dictionaries, query efficiency, structural support priors, instancewise selection, and matched confound controls all have direct precedents. P20 must isolate a narrower operational relationship: under the same response law and information, which risk term changes when coordinates or admissible supports change? The same-information union emulation disproves an intrinsic finite-query routing-class advantage. Shared-coordinate learning remains a practical hypothesis requiring matched real-data evidence.
