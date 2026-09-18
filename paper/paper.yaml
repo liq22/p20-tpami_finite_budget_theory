@@ -22,11 +22,11 @@ research_state:
   central_question: When do shared coordinates improve finite-query response prediction under identical semantics and information?
   current_claim_at_risk: Independent benefit beyond task-driven transforms and structured support selection
   strongest_support: Conditional geometry and exact emulation; controlled nonlinear negative comparison
-  favored_explanation: Direct finite-query response training may reduce combined approximation and estimation error
-  strongest_competing_explanation: Existing structure priors and development information explain the gain
-  largest_unresolved_uncertainty: Independent real-data benefit under strong matched objectives and cost accounting
+  favored_explanation: Response training may add value only when nonlinear, anisotropic or finite-query estimation terms make oracle attribution-tail sparsity insufficient
+  strongest_competing_explanation: In the linear-isotropic limit attribution-tail already equals the coordinate oracle, while support priors explain finite-Q gains
+  largest_unresolved_uncertainty: Independent PHM real-data benefit over non-degenerate matched objectives and structured-support controls
   current_novelty_risk: Projection, learned transforms, bilevel dictionaries and instancewise selection already exist
-  most_informative_next_action: Compare response-trained coordinates against matched objective and structured-support controls
+  most_informative_next_action: Run one frozen-predictor PHM pilot comparing response, sparse-reconstruction and attribution-tail objectives under one aggregation and response table
   possible_outcomes_and_decisions: Retain bounded gains; narrow or reject on null effects
   stopping_condition: Do not promote performance claims without independent matched evidence
 main_claims:
@@ -44,7 +44,7 @@ main_contributions:
     text: Budgeted coordinate-comparison formulation and containment boundary
     supporting_claims: [C1, C3]
   - contribution_id: K2
-    text: Shared-coordinate response objective with independent candidate selection
+    text: Shared-coordinate finite-query response objective with non-degenerate matched-objective controls and independent candidate selection
     supporting_claims: [C2]
   - contribution_id: K3
     text: Information-matched negative control for interpreting finite-query routing gains
@@ -54,7 +54,7 @@ required_experiments:
     text: Exact geometry and finite-query emulation tests
     supports_claims: [C1, C3]
   - experiment_id: E2
-    text: Matched objectives, structured supports and real-data generality
+    text: One PHM falsification pilot with matched objectives and structured supports before broader generality
     supports_claims: [C2]
 artifacts:
   bibliography: paper/refs/references.bib
