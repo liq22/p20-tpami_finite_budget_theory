@@ -37,10 +37,24 @@ For fresh perturbations of each development-training input, compute
 $$\ell_u(A)=\operatorname{mean}_{v\in score(u)}
 [(\hat a_u^TAv-d_u(v))^2].$$
 
-Optimize
+The primary matched-objective study optimizes the mean excess
 
-$$\min_\theta\max_h\operatorname{mean}_{u\in h}
-[\ell_u(A_\theta)-\ell_u(I)].$$
+$
+\min_\theta
+\operatorname{mean}_u
+[\ell_u(A_\theta)-\ell_u(I)].
+$
+
+A predefined worst-group aggregation,
+
+$
+\min_\theta\max_h\operatorname{mean}_{u\in h}
+[\ell_u(A_\theta)-\ell_u(I)],
+$
+
+is an optional robustness ablation. It must be applied identically to every
+matched coordinate objective and is not part of the claimed response-objective
+gain.
 
 These score queries are development-training data because they optimize A; they
 are not confirmation evidence. Differentiation passes through the matrix
@@ -87,6 +101,12 @@ emulation, not a new optimized union baseline. Plain union-OMP is only one
 support-search algorithm. A lower error against that algorithm cannot establish
 an intrinsic routing advantage. See `paper/theory/04_COMPARATOR_GEOMETRY_AND_ROUTING.md`.
 
-The remaining method test is shared-basis objective value against reconstruction,
-attribution-sparsity and structured-support objectives with identical information.
-No real-data or state-of-the-art superiority is presently established.
+The remaining method test uses the non-degenerate controls in
+\`paper/theory/05_MATCHED_OBJECTIVE_CONTROLS.md\`: best-$k$ sparse
+reconstruction and best-$k$ attribution-tail concentration. Full reconstruction
+and L2 attribution magnitude are invalid controls for this orthogonal family
+because they are rotation invariant. The response, reconstruction and
+attribution objectives must use the same unit split, coordinate family, $k$,
+candidate-selection rule and aggregation. Structured-support controls are
+evaluated separately with the same response table. No real-data or
+state-of-the-art superiority is presently established.
