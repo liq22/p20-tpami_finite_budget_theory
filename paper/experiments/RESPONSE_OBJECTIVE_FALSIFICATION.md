@@ -15,12 +15,12 @@ Before any basis training, freeze:
 
 - predictor checkpoint;
 - scalar explanatory target;
-- original-space intervention law (mu_x);
+- original-space intervention law \(\mu_x\);
 - independent unit definition;
 - train / selection / test unit split;
-- coordinate dimension (p);
-- sparsity budget (k);
-- construction-query budgets (Q);
+- coordinate dimension \(p\);
+- sparsity budget \(k\);
+- construction-query budgets \(Q\);
 - ridge coefficient and support-search rule;
 - development-scoring budget;
 - primary aggregation: mean over independent units.
@@ -30,43 +30,41 @@ independent unit. No row-wise random split is allowed.
 
 ## 2. Matched response table
 
-For every anchor input (x_u), materialize once:
+For every anchor input \(x_u\), materialize once:
 
-[
-x_u,quad
-V^{\rm fit}_u,quad
-d^{\rm fit}_u,quad
-V^{\rm score}_u,quad
+\[
+x_u,\quad
+V^{\rm fit}_u,\quad
+d^{\rm fit}_u,\quad
+V^{\rm score}_u,\quad
 d^{\rm score}_u,
-]
+\]
 
 where
 
-[
+\[
 d_x(v)=s(x)-s(x-v).
-]
+\]
 
 Every matched coordinate method consumes the same stored table. Predictor calls
 are therefore not regenerated per method.
 
 Required study arrays for each split are:
 
-```text
-x          [N, p]
-fit_v      [N, Q_max, p]
-fit_d      [N, Q_max]
-score_v    [N, R, p]
-score_d    [N, R]
-groups     [N]          # only if a prespecified group analysis is used
-unit_ids   [N]
-```
+    x          [N, p]
+    fit_v      [N, Q_max, p]
+    fit_d      [N, Q_max]
+    score_v    [N, R, p]
+    score_d    [N, R]
+    groups     [N]          # only if a prespecified group analysis is used
+    unit_ids   [N]
 
-Smaller (Q) values take a frozen prefix of `fit_v/fit_d`; they do not redraw
-easier queries.
+Smaller \(Q\) values take a frozen prefix of **fit_v / fit_d**; they do not
+redraw easier queries.
 
 ## 3. Primary matched objective comparison
 
-Use one orthogonal family (A_\theta=\exp(S_\theta)), one optimizer budget,
+Use one orthogonal family \(A_\theta=\exp(S_\theta)\), one optimizer budget,
 one checkpoint schedule and one independent selection split. Every trainable
 objective emits the same number of frozen trajectory candidates. To prevent the
 selection rule itself from favoring one native objective, **all trajectories use
@@ -87,12 +85,12 @@ seeing test units.
 
 Train with
 
-[
+\[
 J_{\mathrm{rec},k}(A)
 =
 \mathbb E
 \|Ax-H_k(Ax)\|_2^2.
-]
+\]
 
 Full reconstruction is prohibited because it is identically zero for an
 orthogonal full-dimensional basis.
@@ -100,28 +98,28 @@ orthogonal full-dimensional basis.
 ### M3 — Attribution-tail-trained coordinates
 
 From the same development response table, estimate a dense raw-coordinate
-response vector (widehat\beta_u) with one declared ridge rule, then train
+response vector \(\widehat\beta_u\) with one declared ridge rule, then train
 
-[
+\[
 J_{\mathrm{attr},k}(A)
 =
 \mathbb E
 \|A\widehat\beta_u-H_k(A\widehat\beta_u)\|_2^2.
-]
+\]
 
-An L2 norm of (A\widehat\beta) is prohibited because it is rotation
+An L2 norm of \(A\widehat\beta\) is prohibited because it is rotation
 invariant.
 
 ### M4 — Response-trained coordinates
 
-Train with the fresh response error of the actual (Q,k) sparse decoder:
+Train with the fresh response error of the actual \(Q,k\) sparse decoder:
 
-[
+\[
 J_{\mathrm{resp},Q,k}(A)
 =
 \mathbb E
 (\widehat a_{Q,k}(A)^\top Av-d(v))^2.
-]
+\]
 
 The primary comparison M2–M4 uses the mean unit loss. Worst-group aggregation is
 a separate common-aggregation ablation, not part of the method contrast.
@@ -134,7 +132,7 @@ The response-trained basis must also be compared with:
 - a prespecified structured/block union using only development information;
 - best selected single fixed basis.
 
-The structured control is required because lower finite-(Q) error can come
+The structured control is required because lower finite-\(Q\) error can come
 from a smaller admissible support family rather than a better coordinate
 approximation.
 
@@ -158,26 +156,26 @@ access, offline training and online queries for each external baseline.
 
 ## 6. Primary estimand and statistics
 
-For independent test unit (u),
+For independent test unit \(u\),
 
-[
+\[
 \Delta_u(m)
 =
 L_u(\mathrm{resp})
 -
 L_u(m),
-]
+\]
 
-where (L_u) is fresh response MSE using identical scoring displacements.
+where \(L_u\) is fresh response MSE using identical scoring displacements.
 
 Report for every contrast:
 
-- paired mean (overline\Delta);
+- paired mean \(\overline\Delta\);
 - unit-level bootstrap or paired permutation interval/test;
 - median and interquartile range as descriptive robustness;
-- per-(Q) result;
+- per-\(Q\) result;
 - selected basis checkpoint and selection-set objective;
-- (R_{\rm full}), coordinate oracle gap, support gap and coefficient gap on
+- \(R_{\rm full}\), coordinate oracle gap, support gap and coefficient gap on
   tractable diagnostic subsets.
 
 Do not treat repeated queries or windows from one unit as independent samples.
@@ -193,21 +191,19 @@ Start with one vibration-diagnosis task that supplies:
 
 Required order:
 
-```text
-predictor verification
-→ one stored matched response table
-→ M0–M4
-→ structured support control
-→ paired unit statistics
-→ scientific decision
-```
+    predictor verification
+    → one stored matched response table
+    → M0–M4
+    → structured support control
+    → paired unit statistics
+    → scientific decision
 
 ### Current CWRU acquisition path
 
-The currently inspected PHMFactory `main` exposes a public
-`cwru-demo-v1` bundle containing `metadata.xlsx` and
-`RM_001_CWRU.h5`, with explicit Id-to-signal validation. That path is suitable
-for acquiring and validating the first PHM dataset without modifying PHMFactory.
+The currently inspected PHMFactory main exposes a public **cwru-demo-v1**
+bundle containing **metadata.xlsx** and **RM_001_CWRU.h5**, with explicit
+Id-to-signal validation. That path is suitable for acquiring and validating the
+first PHM dataset without modifying PHMFactory.
 
 The shipped CWRU quickstart trains a predictor for one CPU epoch at execution
 time and the repository does not provide a frozen P20-ready checkpoint.
@@ -243,7 +239,7 @@ II. Do not add a router or change the target to recover a positive result.
 
 ## 9. Evidence state
 
-As of this protocol, the only executed evidence is the controlled synthetic
-routing/emulation study already recorded in
-`paper/experiments/EXECUTED_20260918.md`. No real-data M2–M4 comparison has
-been executed yet.
+As of this protocol, the only executed benchmark-independent evidence is the
+controlled synthetic routing/emulation study already recorded in
+**paper/experiments/EXECUTED_20260918.md** and the deterministic
+objective-control checks. No real-data M2–M4 comparison has been executed yet.
