@@ -67,7 +67,11 @@ easier queries.
 ## 3. Primary matched objective comparison
 
 Use one orthogonal family (A_\theta=\exp(S_\theta)), one optimizer budget,
-one checkpoint schedule and one independent selection split.
+one checkpoint schedule and one independent selection split. Every trainable
+objective emits the same number of frozen trajectory candidates. To prevent the
+selection rule itself from favoring one native objective, **all trajectories use
+the same response-MSE selector on the independent selection units**. Native
+training losses never inspect test units.
 
 ### M0 — Identity
 
@@ -75,8 +79,9 @@ No coordinate training.
 
 ### M1 — Best fixed transform
 
-Selection-set choice among prespecified identity / DCT / wavelet-like fixed
-orthogonal transforms. The candidate set is frozen before seeing test units.
+Response-MSE selection-set choice among prespecified identity / DCT /
+wavelet-like fixed orthogonal transforms. The candidate set is frozen before
+seeing test units.
 
 ### M2 — Sparse-reconstruction-trained coordinates
 
