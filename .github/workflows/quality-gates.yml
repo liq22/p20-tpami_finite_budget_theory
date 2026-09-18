@@ -3,7 +3,7 @@ name: quality-gates
 on:
   pull_request:
   push:
-    branches: [master, dev]
+    branches: [master, dev, 'paper/**']
 
 permissions:
   contents: read
