@@ -1,35 +1,52 @@
-# Motivation figure
+# Figures for the problem and method
 
-## Message and mapping
+The source is `experiments/p19/plot_motivation.py`. Run it from the repository
+root to regenerate both SVGs; `bash scripts/build_paper.sh build/p20` renders
+vector PDFs, PNG previews and the reading manuscript. SVG text, rectangles,
+polylines and arrowheads are individually editable. Neither figure embeds a
+raster image or encodes an invented numerical result.
 
-The figure exposes a confounded routing comparison. Panel a is plain union-OMP;
-panel b is context-restricted support search; panel c is the same-information
-union emulator. The response, k, Q, development information and descriptor map
-to Section 3 notation. The selector and zero-padding map to the finite-query
-emulation proposition. The numerical footer reads the executed synthetic summary,
-not a constructed curve. Main-text Section 1 explains the ambiguity; Sections
-3–5 provide the formulation, mechanism and comparison.
+## Figure 1 — Fixed-response comparison
 
-## Regenerate
+File: `motivation.svg`. Section: 2.3.
 
-From the repository root:
+Purpose: distinguish fixed predictor/target/law/information/budgets from the
+coordinate-learning intervention and the measured response loss. The figure
+replaces the earlier routing-focused motivation panel rather than adding another
+redundant diagram. The earlier numerical containment result remains in Section 5.
 
-```bash
-python experiments/p19/plot_motivation.py
-cairosvg paper/assets/figures/motivation.svg -o paper/assets/figures/motivation.pdf
-mkdir -p build
-cairosvg paper/assets/figures/motivation.svg --output-width 3000 -o build/motivation.png
-bash scripts/build_paper.sh build/p20
-```
+Elements: raw x and v -> d_x(v); construction T_Q; separate scoring responses;
+method intervention m; fitted A, support S and coefficients a; L_u and Delta.
+These map to manuscript equations (1)–(6). The lower gap panel explains why a
+loss comparison alone does not isolate approximation from fitting effects.
 
-Dependencies: Python 3, CairoSVG, Pandoc, XeLaTeX and DejaVu fonts. Install locally
-with the platform package manager; no font files are included. To regenerate the
-source experiment, run `python experiments/p19/toy.py --output results/paired_control`
-and explicitly pass its `toy_summary.json` to `plot_motivation.py --summary`.
-Do not replace the recorded summary with hypothetical output.
+Caption: the manuscript supplies the full caption. Its conclusion is the need
+for controlled comparison, not an observed coordinate-learning gain.
 
-SVG source uses independent text, rectangles, lines and an arrowhead path. It has
-no raster images or base64 data. The SVG is the committed editable asset; PDF and
-high-resolution PNG are reproducible exports. The design follows the requested
-nature-figure emphasis on a single scientific ambiguity and evidence mapping;
-its full external automatic audit suite is not claimed to have run.
+## Figure 2 — Shared-coordinate method
+
+File: `method_overview.svg`. Section: 3.1.
+
+Purpose: make the learned object and information boundaries visible.
+The three stages are development training, independent selection, and frozen
+new-input evaluation. Thin outlines mark inherited operations; the heavy outline
+marks the response-specific outer loss. Dashed feedback updates only the shared
+basis. Fresh development outer responses feed the outer loss directly; they do
+not enter the construction decoder. Test scoring has no return edge.
+
+Elements: A_theta (8); greedy support and ridge (9)–(10); outer response loss
+(11); matched proxy replacements (Section 3.3); common selection (12); and
+independent-unit measurement (6). These correspond to Algorithm 1 steps 1–5.
+The union comparator appears only in the footer because it is an external
+control, not an extra trainable module.
+
+Caption: the manuscript supplies the full caption, distinguishing proposed
+learning intervention from reused components and unresolved real-data evidence.
+
+## Rendering and scope
+
+Both diagrams use a 180-mm canvas and readable vector text. Scientific purpose,
+restrained hierarchy and rendered inspection follow the supplied nature-figure
+reference; no figure-management framework is copied into this repository.
+Inspect both the standalone SVG and the compiled manuscript at reading size.
+The main manuscript, not this README, contains all mathematical definitions.

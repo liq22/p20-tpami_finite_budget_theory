@@ -1,231 +1,176 @@
 # Real-data falsification protocol for C2
 
-## Question
+## Question and scope
 
-Does response-driven shared-coordinate learning improve finite-budget response
-prediction on independent real units beyond existing transform objectives and
-support priors, when predictor, response target, original-space intervention law,
-development information, k, Q and unit split are fixed?
+Does directly training shared coordinates on finite-query response error improve
+fresh prediction of the same frozen model response beyond matched reconstruction,
+coefficient-concentration, fixed-basis and support-prior controls?
 
-This protocol tests Contribution II only. It does not test physical
-interpretability, predictor accuracy, causal validity, or state-of-the-art
-diagnostic performance.
+This is a fixed-response claim. Response MSE alone does not establish diagnostic
+accuracy, physical meaning, temporal localization or generic explanation quality.
 
-## Experimental unit and split
+## Independent units and fixed information
 
-The independent unit is the highest non-overlapping entity available before
-windowing: recording, bearing/machine run, patient, subject, or equivalent.
-Windows from one unit may be used internally to form responses but must never be
-counted as independent test units.
+Start with one real dataset family and one frozen predictor. Choose the
+independent unit before windowing: subject, patient, recording, machine run or
+another defensible non-overlapping entity. Keep development-training,
+development-selection and final-test units disjoint. Freeze predictor input
+preprocessing, checkpoint provenance, scalar target rule, original-space
+intervention law, query counts and unit weighting.
 
-Use three disjoint unit sets:
+All methods have the same actual input vectors, context availability,
+construction responses and separate scoring responses. A scalar response is
 
-- development-train: optimize trainable coordinate objectives;
-- development-select: choose checkpoints and any finite candidate/baseline;
-- final-test: compute the confirmatory estimand once.
+$$d_x(v)=s(x)-s(x-v).$$
 
-No test unit may affect preprocessing parameters, candidate generation,
-hyperparameters, support priors, checkpoint selection, or basis selection.
+Charge Q perturbed evaluations and one reusable base evaluation per new input.
+Report development, selection, construction and evaluation calls separately.
+Do not charge a gradient as one scalar query or regard offline training as free.
 
-## Fixed response contract
+The current reference batch supports one input per independent unit. Choose that
+input with a rule frozen before outcome inspection. A multiple-window study
+needs explicit within-unit weighting, not window IDs masquerading as unit IDs.
+No test outcome may choose preprocessing, training groups, candidates or priors.
 
-For every method, hold fixed:
+## Primary estimand and analysis lock
 
-- frozen predictor and scalar target score s;
-- original-space displacement law mu_x;
-- exact fit-response table and exact fresh scoring-response table;
-- k nonzero coordinate budget;
-- Q scalar fitting-response budget;
-- development units and final-test units;
-- target labels/indices and preprocessing of predictor inputs.
-
-The primary response is
+For fixed within-unit weights summing to one,
 
 $$
-d_x(v)=s(x)-s(x-v).
+L_u(m)=\sum_j w_{uj}\frac1R\sum_r
+[\widehat d_{uj,m}(v_{ujr})-d_{x_{uj}}(v_{ujr})]^2,
+\qquad \Delta_u(m,m_0)=L_u(m)-L_u(m_0).
 $$
 
-Every coordinate method is scored by the same fresh-response MSE after fitting
-the same k-sparse decoder from the same Q responses.
+Negative Delta favors m. Freeze the primary (k,Q) pair, primary matched-family
+reference, ridge rule, group aggregation and statistical rule on development
+units. The primary reference is the strongest development-selected matched
+proxy objective, not identity alone. Do not select a reference by test losses.
 
-## Primary estimand
+Report the paired unit mean, a 95% unit-resampling bootstrap interval, raw MSE,
+and descriptive median difference, win fraction and predefined group means.
+Prespecify stratified resampling or a target group mixture when that is the
+estimand. Do not resample windows or queries as independent observations.
 
-For test unit u and method m,
+An interval containing zero is inconclusive, not proof of equivalence. A claim
+of negligible practical benefit requires a justified prespecified margin and
+sufficient precision. Do not impose an arbitrary 1–2% effect cutoff or require a
+positive result to justify retaining an experiment.
+
+Keep a small prespecified grid of k and at least three Q levels, including a
+query-limited and a less limited regime. Other cells are secondary; separate
+inferential claims require multiplicity adjustment or simultaneous uncertainty.
+Do not choose significant cells after final-test inspection.
+
+## Tier A: matched coordinate objectives
+
+Mandatory comparisons: identity; DCT or a fixed domain transform; the best
+selection-chosen fixed basis; reconstruction-trained coordinates;
+coefficient-concentration-trained coordinates; response-trained coordinates.
+
+The three trained objectives share A=exp(S), identity initialization, optimizer,
+step budget, checkpoint schedule, decoder, k, Q, ridge and available information.
+Only the outer objective changes. Use a common aggregation and select all
+candidate families by fresh response error on separate selection units.
+This isolates candidate-generation objectives, not entirely response-free
+pipelines. Record fixed-family and learned-family candidate counts separately.
+
+Let H_k retain the k largest-magnitude coordinates:
 
 $$
-L_u(m)=\frac{1}{R}\sum_{r=1}^{R}
-\left(\hat d_{u,m}(v_r)-d_u(v_r)\right)^2.
+\ell_{\rm rec}(A;x)=\|x-A^T H_k(Ax)\|^2,
 $$
 
-Against a prespecified reference r, report the paired unit effect
-
 $$
-\Delta_u(m,r)=L_u(m)-L_u(r),
-\qquad
-\Delta(m,r)=\frac{1}{N}\sum_{u=1}^{N}\Delta_u(m,r).
+\widehat\beta_x=(V^TV/Q+\lambda I)^{-1}V^Td/Q,
+\quad
+\ell_{\rm coef}(A;x)=
+\frac{\|A\widehat\beta_x-H_k(A\widehat\beta_x)\|^2}{\|\widehat\beta_x\|^2}
 $$
 
-Negative Delta favors m. The primary comparison is response-trained coordinates
-versus the strongest development-selected matched-family non-response objective,
-not versus identity alone.
+with the coefficient loss defined as zero for zero beta_hat. The response
+objective uses fresh development outer error of the actual Q-query decoder.
 
-Report the unit-level paired mean difference with a 95% bootstrap confidence
-interval resampling independent units. Also report median paired difference,
-win fraction, mean MSE, and predefined group means as descriptive diagnostics.
-Do not resample windows as if they were independent units.
+**Reconstruction uses actual input x.** Full orthogonal reconstruction is
+identically zero; population truncation loss on spherical perturbations is
+rotation invariant. Do not build the competing reconstruction objective solely
+from that degenerate law. **Concentration uses full fitted coefficients**, not
+an already k-sparse decoder. Do not give this proxy extra queries or gradients.
 
-## Comparator ladder
+These are matched-family controls, not faithful TRIM or AWD implementations.
+`train_basis` implements all three at library level. The existing response-only
+CLI is not yet the complete three-objective real-data runner; the next execution
+slice must supply actual input vectors and retain unit identities.
 
-### Tier A: same coordinate family and same decoder
+## Tier B: support controls and mechanism attribution
 
-Mandatory:
+Compare plain union search under a total global k budget with an
+information-matched structured/block union when a descriptor or support prior is
+available. No structured method receives an otherwise unavailable descriptor.
 
-1. identity;
-2. fixed DCT or domain-standard fixed orthogonal transform;
-3. best fixed single basis chosen on development-select only;
-4. reconstruction-trained orthogonal coordinates;
-5. response-coefficient-sparsity-trained orthogonal coordinates;
-6. response-trained orthogonal coordinates.
+A same-information fixed union can exactly emulate a routed decoder by block
+zero-padding. This is an equality control for the routing interpretation, not a
+performance hurdle. Within the stated assumptions routing cannot escape that
+prediction class merely by outperforming plain union-OMP.
 
-Items 4-6 must use the same orthogonal parameterization, optimizer budget,
-candidate/checkpoint schedule, unit splits, k and Q. Only the outer objective may
-change.
+When tractable, estimate coordinate approximation, selected-support excess and
+coefficient excess separately. Use an exact low-dimensional oracle or an
+independent diagnostic response set. Additional diagnostic queries are evaluation
+costs, not construction information, and must not choose the deployed basis,
+support or primary reference. Estimated component differences need not inherit
+the population decomposition's nonnegativity at finite sample size.
 
-For reconstruction training, minimize fresh sparse reconstruction error of the
-same development perturbations under a k-coordinate truncation. For
-response-coefficient sparsity, minimize a declared concentration penalty on
-response coefficients estimated from development data; the scoring response MSE
-remains untouched until comparison. These are matched-family controls, not
-claims of faithful AWD/TRIM reproduction.
+If a gain vanishes against structured search, support identification is a
+plausible mechanism, not a proved mediation effect. Narrow the claim and inspect
+the component diagnostics rather than asserting independent approximation gain.
 
-### Tier B: support-search controls
+## Tier C: faithful methods and external validity
 
-Mandatory:
+Keep faithful TRIM, AWD and task-driven dictionary methods separate from Tier A.
+Add ContraLSP, TimeX++ and TIMING when their native task and model-access
+requirements apply. Preserve native objectives and report differing predictor
+access, offline training, intervention semantics and explanation outputs.
 
-7. plain union with global k support budget;
-8. structured/block union with the same available descriptor or prior used by
-   any routed/structured method;
-9. information-matched routed/block-restricted decoder when such a contrast is
-   reported.
-
-The structured union is required because a route-versus-plain-union gap can be a
-support-search effect. Routing is not a separate estimator-class contribution
-unless it survives the same-information containment control.
-
-### Tier C: faithful prior methods
-
-Keep faithful TRIM, Adaptive Wavelet Distillation, and a task-driven dictionary
-baseline separate from Tier A when the required model access is compatible.
-For time-series tasks, also include recent temporal explainers such as ContraLSP,
-TimeX++, and TIMING when their native problem definition applies. Preserve each
-method's native objective and report unavoidable differences in model access,
-offline training, perturbation semantics, and output object. Do not silently
-rewrite a mask, information-bottleneck explanation, or path attribution into the
-proposed coordinate family merely to force a common implementation.
-
-Tier C serves external validity rather than the primary matched-family estimand.
-Report native explanation metrics where meaningful, in addition to response MSE
-only when a mathematically justified response-decoder adaptation exists.
-
-## Budget grid
-
-The minimum confirmatory grid is
-
-- k in a small prespecified set spanning severe to moderate sparsity;
-- Q in at least three levels including Q close to k and a clearly less
-  query-limited regime;
-- one fixed ridge rule selected without final-test access.
-
-A method claim must not depend on one cherry-picked (k,Q) pair. Freeze one
-primary (k,Q) pair and one primary matched-family reference using development
-units only before opening final-test outcomes. Treat the remaining grid as
-prespecified secondary analyses. If inferential claims are made separately at
-multiple grid points, report multiplicity control or simultaneous uncertainty
-rather than selecting significant cells after inspection.
-
-## Attribution diagnostics
-
-For each method and (k,Q), decompose or estimate:
-
-1. oracle coordinate approximation C_k when computationally tractable on a
-   diagnostic subset;
-2. support-search excess using a stronger/exhaustive support comparator on low
-   dimension or a controlled subset;
-3. coefficient-estimation excess conditional on the selected support;
-4. final finite-Q response MSE.
-
-These diagnostics are mechanism evidence. Only item 4 is the primary empirical
-endpoint for the fixed-response claim.
-
-## Metric and semantic boundary
-
-Response MSE does not by itself establish generic explanation quality. On
-synthetic tasks with known salient regions, also report a prespecified
-ground-truth localization metric. On real time-series tasks, retain compatible
-native metrics used by the strongest temporal explainers; for signed temporal
-attributions, CPD/CPP-style diagnostics are relevant when their attribution
-semantics apply. Do not compare incomparable metrics by ranking their raw values.
-
-The primary intervention law is part of the estimand. Before submission, repeat
-the central comparison under at least one prespecified scientifically reasonable
-alternative law, or explicitly restrict the claim to the single declared law.
-An intervention-sensitivity reversal is a boundary result, not a failed run.
+Use native localization, retention or signed-attribution metrics where
+compatible. Do not turn masks or path attributions into response coefficients
+without a mathematical adaptation, or rank incomparable raw metrics. These
+comparisons address external validity, not the primary objective intervention.
 
 ## Robustness and computational boundary
 
-If meaningful group labels are unavailable before explanation fitting, use one
-group rather than inventing post-hoc groups. If group-wise optimization is used,
-compare it with mean-risk training to show whether the claimed gain comes from
-the coordinate objective or from a group-DRO choice.
+Use one group for the first study unless meaningful groups are available before
+fitting. For a multi-group study, compare mean training with worst-group excess
+using the same group definitions across objectives. Worst-group excess over
+identity is not worst absolute risk.
 
-The dense matrix-exponential reference is cubic in coordinate dimension and is
-currently limited to p<=256. Report feature dimension, offline training time,
-online fitting time, peak memory, and all scalar model queries. Do not claim
-scalability to long raw sequences without either a structured orthogonal
-parameterization or direct evidence in the target dimensions. Hyperparameter
-selection for ridge, optimization steps, learning rate, k and Q must use
-development units only.
+The dense model has p<=256, O(p^2) matrix storage and O(p^3) matrix-exponential
+updates. Report actual dimension, training/selection time, online fitting time,
+peak memory and query counts. Do not claim long-sequence scalability by silently
+reducing input dimension. A structured family is a separate future intervention.
 
-## Minimum real experiment
+Before a broad claim, repeat under a prespecified reasonable alternative
+intervention law or restrict the conclusion explicitly to the primary law.
+Preserve ranking reversals. A second frozen predictor or initialization is
+required for model-independent generality, not for the first conditional test.
 
-Start with one dataset family and one frozen predictor.
+## Required outputs and decision
 
-Required outputs:
+Retain input/unit split, predictor checkpoint and target, intervention law,
+(k,Q,lambda), trained/fixed candidate selection, unit loss rows, paired effect
+intervals and separated costs. Do not report a complete baseline comparison
+until all mandatory implemented methods have actually run.
 
-- explicit unit IDs and train/select/test split;
-- predictor checkpoint and scalar target definition;
-- perturbation law;
-- exact k,Q grid;
-- one response table shared by all compared methods;
-- unit-level response MSE table;
-- paired effect table and confidence intervals;
-- selection-only record for every trainable/fixed candidate;
-- offline training cost, online scalar queries, and measured runtime reported
-  separately.
+Strengthen a finite-budget C2 claim when the primary paired effect shows
+improvement with adequate precision against the matched reference; use the
+prespecified other controls and budget cells to delimit that statement.
+Do not require significance against every method in every cell to support a
+narrow, prespecified claim.
 
-Do not expand to additional benchmark families until this experiment can
-distinguish the response objective from matched objectives and support priors.
+Revise to a regime-specific or support-identification finding when evidence
+supports only that interpretation. Treat imprecise nulls as unresolved. Reject
+an asserted useful advantage when a precise comparison excludes the prespecified
+useful effect or a control is reliably better. Retain all null/reversed results;
+do not rescue the claim by changing the predictor, split or primary budget.
 
-## Go / revise / stop rule
-
-Strengthen C2 only if response-trained coordinates improve the primary paired
-estimand over the strongest matched-family control on final-test units and the
-effect is not removed by the structured-support control.
-
-Revise C2 to a conditional mechanism claim if gains appear only at particular
-(k,Q) regimes or only through easier support search.
-
-Reject an independent response-coordinate advantage if the matched-family
-control is indistinguishable or better across the prespecified grid. Preserve
-that null result; do not add routing, MoE, a larger predictor, or a different
-test split to recover the claim.
-
-## Expansion after the first falsification test
-
-Only after the first real experiment supports a stable effect, extend to
-multiple external time-series families. Each added family must preserve the same
-scientific contract even if the native predictor architecture and physical
-meaning of a unit differ. The final TPAMI evidence should also test whether the
-effect survives predictor initialization or architecture changes; one frozen
-checkpoint is sufficient for the first falsification experiment, not for a broad
-model-independent claim.
+Only after the first real study yields an interpretable decision should the
+experiment expand to additional time-series families.

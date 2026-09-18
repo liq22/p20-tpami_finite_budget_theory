@@ -26,8 +26,8 @@ research_state:
   strongest_competing_explanation: Existing structure priors and development information explain the gain
   largest_unresolved_uncertainty: Independent real-data benefit under strong matched objectives and cost accounting
   current_novelty_risk: Projection, learned transforms, bilevel dictionaries and instancewise selection already exist
-  most_informative_next_action: Compare response-trained coordinates against matched objective and structured-support controls
-  possible_outcomes_and_decisions: Retain bounded gains; narrow or reject on null effects
+  most_informative_next_action: Compare response-trained coordinates against actual-input reconstruction, full-coefficient concentration and structured supports
+  possible_outcomes_and_decisions: Strengthen supported effects; preserve imprecise nulls; narrow or reject precise counterevidence
   stopping_condition: Do not promote performance claims without independent matched evidence
 main_claims:
   - claim_id: C1
@@ -51,11 +51,23 @@ main_contributions:
     supporting_claims: [C3]
 required_experiments:
   - experiment_id: E1
-    text: Exact geometry and finite-query emulation tests
-    supports_claims: [C1, C3]
+    text: Exact uncentered, singular and full-budget response geometry
+    supports_claims: [C1]
   - experiment_id: E2
-    text: Matched objectives, structured supports and real-data generality
+    text: Finite-query approximation, support and coefficient diagnostics
+    supports_claims: [C1, C2]
+  - experiment_id: E3
+    text: Information-matched union emulation and descriptor controls
+    supports_claims: [C3]
+  - experiment_id: E4
+    text: Matched response, actual-input reconstruction and coefficient-concentration objectives
     supports_claims: [C2]
+  - experiment_id: E5
+    text: Independent real-data and compatible native-method comparisons
+    supports_claims: [C2]
+  - experiment_id: E6
+    text: Cost, aggregation and intervention-law boundaries
+    supports_claims: [C2, C3]
 artifacts:
   bibliography: paper/refs/references.bib
   literature: paper/refs/LITERATURE_MATRIX.md

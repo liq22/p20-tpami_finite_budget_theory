@@ -1,92 +1,116 @@
-# Shared orthogonal response-basis model
+# Shared-coordinate response model
 
-## Model, not a new diagnostic predictor
+## Source and scientific scope
 
-The learned component is a single coordinate matrix A shared across inputs of a
-fixed predictor. It does not train, clone or replace the predictor. With
-z=Ax and inverse A^T, s(A^Tz)=s(x). Responses are collected at original x-v,
-never at independently masked transformed coordinates.
+`paper/draft/main.md`, Sections 2–3, defines the problem and Algorithm 1.
+`src/S01_Package/response_basis.py` implements the shared basis, decoder,
+three outer objectives, and independent candidate selection. The predictor is
+fixed; no PHMFactory code or dependency pointer changes.
 
-`SharedOrthogonalBasis` stores p(p-1)/2 parameters in a skew-symmetric matrix S:
+The shared matrix is A=exp(S), S=-S^T, with p(p-1)/2 parameters and p<=256.
+Its dense matrix exponential is cubic in p. Responses are collected at x-v in
+original coordinates. An inverse reconstruction through A does not define a new
+predictor or establish physical interpretability.
 
-$$A=\exp(S),\quad S=-S^T,\quad A^TA=I.$$
+## Decoder and differentiation
 
-This dense reference is limited to p<=256. Matrix exponential costs O(p³).
-A block/structured implementation for long sequences and images is future work,
-not an automatic dimensionality reduction. The component learns SO(p); row sign
-changes do not change the sparse prediction class, so the missing reflection
-component is not a restriction on that class.
+For Z=V A^T, greedily maximize squared residual correlation divided by column
+squared norm. Refit ridge coefficients after each selected atom:
 
-## Inner decoder
+$$
+\hat a_S=(Z_S^T Z_S/Q+\lambda I)^{-1}Z_S^T d/Q,\qquad \lambda>0.
+$$
 
-For each input, collect Q fitting perturbations and scalar differences from one
-fixed target. Z_fit=V_fit A^T. Greedy normalized-correlation support selection
-with residual refitting chooses at most k coordinates S. On those coordinates:
+Stop at k atoms, zero residual, or no eligible column. The same numerical
+column-eligibility and tie rules apply to every basis. This is normalized greedy
+support search with restricted ridge refitting. Its residual is not the
+orthogonal residual of unregularized OMP, and its support is not the population
+cardinality oracle.
 
-$$\hat a_S=(Z_S^TZ_S/Q+\lambda I)^{-1}Z_S^Td/Q.$$
+Autograd differentiates the matrix exponential and restricted solve on the
+current discrete support branch. It does not differentiate the argmax or prove
+a population-gradient formula across support discontinuities.
 
-Lambda is positive and explicit. The method is OMP support selection followed by
-ridge fitting, not the population cardinality oracle. It returns sensitivity
-coefficients for response prediction, not native Integrated Gradients scores.
-A singular Gram matrix is not repaired by replacing the task or explanation.
+## Three matched outer objectives
 
-## Outer objective
+| `objective` | Training quantity | Information used |
+|---|---|---|
+| `response` | Fresh squared response error of the Q-query sparse decoder | Construction and separate development outer responses |
+| `reconstruction` | Squared k-term reconstruction tail of actual input x | Actual development inputs in batch unit order |
+| `coefficient_sparsity` | Normalized k-term tail of A beta_hat | Full raw-space ridge beta_hat from the same Q construction responses |
 
-For fresh perturbations of each development-training input, compute
+Reconstruction requires `inputs=[N,p]` explicitly. It never silently substitutes
+perturbations for real inputs. Full orthogonal reconstruction is zero for every
+A; truncation of a spherically symmetric perturbation has an invariant population
+loss. Neither makes a discriminating reconstruction baseline.
 
-$$\ell_u(A)=\operatorname{mean}_{v\in score(u)}
-[(\hat a_u^TAv-d_u(v))^2].$$
+The coefficient proxy uses full ridge coefficients, not an already k-sparse
+vector. Its denominator is ||beta_hat||^2; zero beta_hat gives zero loss by
+definition. It obtains no additional predictor queries or gradients.
 
-Optimize
+These controls are matched-family objective interventions, not faithful
+reproductions of TRIM, AWD, or task-driven dictionary learning. All methods have
+the same available inputs/responses, but intentionally use different training
+losses. All candidates are selected by response loss.
 
-$$\min_\theta\max_h\operatorname{mean}_{u\in h}
-[\ell_u(A_\theta)-\ell_u(I)].$$
+## Library entry and unchanged default
 
-These score queries are development-training data because they optimize A; they
-are not confirmation evidence. Differentiation passes through the matrix
-exponential and restricted ridge solve on the currently selected support.
-Support argmax is discrete, so this is piecewise-smooth nonconvex optimization.
-No global minimizer or support-recovery theorem is claimed.
+Existing calls to `train_basis(...)` retain `objective='response'` and
+`aggregation='worst_group'`. New explicit values are:
 
-The optimizer never receives predictor parameters or calls the predictor after
-response collection. One finite checkpoint trajectory, including identity, is
-selected on separate development-selection units. Final evaluation units are
-unseen by both optimization and selection.
+```python
+candidates, history = train_basis(
+    train, k=k, ridge=ridge, steps=steps, learning_rate=learning_rate,
+    checkpoint_every=checkpoint_every,
+    objective="reconstruction", inputs=train_x, aggregation="mean",
+)
+A, selected_index, selection_losses = select_basis(
+    candidates, selection, k=k, ridge=ridge, aggregation="mean",
+)
+```
 
-## User interface
+`train_x` must contain the actual fixed-preprocessing input for each training
+unit in exactly the same order as `train.unit_ids`. The shared three-objective
+study calls the same functions with the three declared objective names. The
+existing command-line runner remains a response-only study; it does not yet
+load input vectors or execute the complete three-objective real-data protocol.
 
-Run `bash scripts/run_response_basis.sh test` before training. Then use `demo`
-for a labelled synthetic diagnostic or `study --input DATA.npz --output DIR`
-for supplied scalar response data. All data remain local. Output directories
-are never overwritten. Test data affect reported metrics only, not the selected
-basis. A required method or invalid scientific input fails explicitly.
+`aggregation='mean'` averages unit losses. `worst_group` maximizes predefined
+group-mean excess over each objective's identity loss. Use the same aggregation
+for every objective and selection family. One group reduces both choices to the
+same mean criterion. Multi-group excess is not worst absolute risk.
 
-The NPZ holds train/select/test prefixes, each with:
+## Independence and output semantics
+
+Construct disjoint train, selection and final-test `ResponseBatch` objects.
+Each existing reference row is one independent unit with fit/scoring arrays:
 `fit_v [N,Q,p]`, `fit_d [N,Q]`, `score_v [N,R,p]`, `score_d [N,R]`,
-`groups [N]` integer labels and `unit_ids [N]` Unicode strings. Each row is one
-independent unit in this reference format. Repeated windows of one bearing or
-patient must first be aggregated into a unit-preserving study; do not relabel
-windows as independent IDs. No targets or pretrained models are inferred from
-filenames. Data producers own the explicit fixed-target contract.
+`groups [N]`, and unique `unit_ids [N]`.
 
-## Comparison boundary
+For a first real experiment, use one observation per unit selected by a frozen
+rule. A multiple-window extension must first average within each unit, then
+compute uncertainty over units; relabeling windows as independent rows is not
+permitted. The current shape checks do not establish biological or mechanical
+independence of supplied IDs.
 
-Identity, DCT and random orthogonal bases use identical fit/scoring arrays and
-the identical decoder. Basis-training and selection costs are amortized but not
-free. A scalar-query lower bound with no previous information does not apply to
-a new explanation whose basis already encodes development responses from the
-same fixed model. A dense rotated coordinate is a response feature; physical
-interpretability remains a separate requirement.
+Outer training responses train A. Selection responses choose among a finite
+family frozen before selection inspection. Test scoring responses never choose
+A, k, Q, lambda or the reference. Including identity does not certify population
+no-harm for unbounded raw squared loss.
 
-## Routing is a diagnostic, not the primary learned component
+The best fixed single basis in the existing runner is selected from identity,
+DCT, and eight seed-fixed random orthogonal bases. The exact union emulator is
+an equality control for a routed decoder, not a comparator expected to be beaten.
 
-`experiments/p19/comparators.py` compares frozen candidate bases and their union.
-Its context-matched union uses the same rule and transcript as the group route,
-with zero coefficients outside the selected block. This establishes finite-query
-emulation, not a new optimized union baseline. Plain union-OMP is only one
-support-search algorithm. A lower error against that algorithm cannot establish
-an intrinsic routing advantage. See `paper/theory/04_COMPARATOR_GEOMETRY_AND_ROUTING.md`.
+## Direct validation and remaining evidence
 
-The remaining method test is shared-basis objective value against reconstruction,
-attribution-sparsity and structured-support objectives with identical information.
-No real-data or state-of-the-art superiority is presently established.
+```bash
+python -m unittest discover -s src/S04_Tests -p 'test_response_basis.py' -v
+python -m unittest discover -s src/S04_Tests -p 'test_response_objectives.py' -v
+```
+
+The added tests cover actual-input reconstruction, its spherical degeneracy,
+full-Q coefficient estimation, proxy non-vacuity, branch gradients, common
+candidate selection, and explicit aggregation. They validate method semantics;
+they are not evidence of a real-data C2 advantage. Execute
+`paper/experiments/REAL_FALSIFICATION_PROTOCOL.md` next.

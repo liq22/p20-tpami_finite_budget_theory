@@ -14,26 +14,26 @@ scientific_job:
   research_question: Under identical response semantics and information, when does a shared coordinate basis improve the actual finite-query decoder?
   target_decision: Select a shared explanatory basis or retain identity.
   unit_of_analysis: Independent input unit with nested construction and scoring displacements.
-  input_object: Fixed-response arrays, candidate coordinates, unit groups and explicit query budgets.
+  input_object: Actual input vectors, fixed-response arrays, candidate coordinates, unit groups and explicit query budgets.
   output_object: One shared orthogonal basis and sparse response coefficients.
   operating_regime: Fixed predictor, target, original intervention law and independent train/select/test units.
 mechanism:
-  changed_object: Shared explanatory coordinates; predictor unchanged.
-  minimal_intervention: Train the basis through fresh-within-training response error of OMP-ridge.
+  changed_object: Shared explanatory coordinates and the matched outer-objective intervention; predictor unchanged.
+  minimal_intervention: Compare fresh response training with actual-input reconstruction and same-Q full-coefficient concentration.
   theory_status: analysis
   assumptions: [Finite second moments, Common information, Fixed per-explanation gate, Independent scoring]
   testable_implication: Any same-information route can be embedded into the fixed union without additional model queries.
   expected_signature: Exact route/emulator prediction agreement; objective gains require independent tests.
-  rejection_signature: Shared-basis benefit disappears against matched objectives and structured-support controls.
+  rejection_signature: Precise paired comparisons exclude a prespecified useful objective gain or favor the matched control.
   boundary_signature: Nonlinear decoder changes and gate access to scoring displacements leave the stated class.
 components: []
 evaluation_contract:
-  decisive_comparison: Response-trained basis versus matched reconstruction/sparsity objectives; route versus same-information union.
-  baseline_fairness: Same predictor, target, intervention law, k, Q, development access and descriptor.
-  primary_metric: Independent-unit fresh response MSE.
+  decisive_comparison: Response-trained basis versus matched reconstruction/concentration objectives; route versus its exact same-information union emulator.
+  baseline_fairness: Same predictor, target, intervention law, k, Q, development input/response access and descriptor.
+  primary_metric: Paired independent-unit fresh response MSE difference; negative favors the method.
   property_metric: Maximum absolute route/emulator prediction difference.
-  boundary_test: Singular moments, full budget, descriptor shuffle and query sweeps.
+  boundary_test: Singular moments, full budget, descriptor shuffle, spherical reconstruction degeneracy and query sweeps.
 implementation_notes:
   source_modules: [src/S01_Package/response_basis.py, experiments/p19/comparators.py]
   config_paths: []
-  reproducibility_notes: [Run experiments/p19/toy.py with explicit output; retain negative controls.]
+  reproducibility_notes: [Three objectives are library-level; the current CLI is response-only. Run the real protocol with actual inputs and independent unit IDs.]

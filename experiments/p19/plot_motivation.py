@@ -1,89 +1,158 @@
 #!/usr/bin/env python3
-"""Generate the editable motivation diagram from the recorded control summary.
+"""Render two editable scientific diagrams; neither encodes experimental values.
 
-SVG text, boxes and arrows remain separate objects. The numerical footer reads
-actual outputs, while the equality in panel c is a mathematical identity.
+The first defines the controlled problem. The second separates inherited fitting
+operations, the proposed outer-objective intervention, selection and evaluation.
+Each box, arrow and text line is an independent named SVG element.
 """
-from __future__ import annotations
-
-import argparse
-import json
 from pathlib import Path
 import xml.etree.ElementTree as ET
 
-NS = "http://www.w3.org/2000/svg"
-ET.register_namespace("", NS)
+NS = 'http://www.w3.org/2000/svg'
+ET.register_namespace('', NS)
 
 
-def main() -> None:
-    parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument("--summary", type=Path, default=Path("paper/experiments/results/paired_control_summary.json"))
-    parser.add_argument("--output", type=Path, default=Path("paper/assets/figures/motivation.svg"))
-    args = parser.parse_args()
-    result = json.loads(args.summary.read_text())
-    budgets = result["budgets"]
-    max_error = max(row["max_route_union_prediction_error"] for row in budgets.values())
-    if result["evidence_kind"] != "controlled_synthetic_only":
-        raise ValueError("this figure labels a controlled synthetic experiment")
-    root = ET.Element(f"{{{NS}}}svg", {"viewBox": "0 0 1440 880", "width": "180mm", "height": "110mm", "role": "img"})
-    ET.SubElement(root, f"{{{NS}}}title").text = "Coordinates, search and information must be separated"
-    ET.SubElement(root, f"{{{NS}}}desc").text = "Three matched estimators share a fixed response problem. The union emulator duplicates a routed block without extra model queries."
-    defs = ET.SubElement(root, f"{{{NS}}}defs")
-    marker = ET.SubElement(defs, f"{{{NS}}}marker", {"id": "arrowhead", "markerWidth": "9", "markerHeight": "9", "refX": "8", "refY": "4", "orient": "auto", "markerUnits": "userSpaceOnUse"})
-    ET.SubElement(marker, f"{{{NS}}}path", {"d": "M0,0 L8,4 L0,8 Z", "fill": "#304451"})
+class Diagram:
+    def __init__(self, title, height):
+        self.root = ET.Element(f'{{{NS}}}svg', {
+            'viewBox': f'0 0 1200 {height}', 'width': '180mm',
+            'height': f'{height*.15:g}mm', 'role': 'img'})
+        ET.SubElement(self.root, f'{{{NS}}}title').text = title
+        defs = ET.SubElement(self.root, f'{{{NS}}}defs')
+        marker = ET.SubElement(defs, f'{{{NS}}}marker', {
+            'id': 'arrow', 'markerWidth': '8', 'markerHeight': '8',
+            'refX': '7', 'refY': '4', 'orient': 'auto', 'markerUnits': 'userSpaceOnUse'})
+        ET.SubElement(marker, f'{{{NS}}}path', {'d': 'M0,0 L8,4 L0,8 Z', 'fill': '#222222'})
+        self.box('canvas', 0, 0, 1200, height, border=0)
 
-    def box(name: str, x: int, y: int, w: int, h: int, fill: str = "#ffffff") -> None:
-        ET.SubElement(root, f"{{{NS}}}rect", {"id": name, "x": str(x), "y": str(y), "width": str(w), "height": str(h), "rx": "12", "fill": fill, "stroke": "#89979f", "stroke-width": "1.8"})
+    def box(self, name, x, y, w, h, border=1.5, dashed=False):
+        attrs = {'id': name, 'x': str(x), 'y': str(y), 'width': str(w),
+                 'height': str(h), 'fill': '#ffffff', 'stroke': '#222222',
+                 'stroke-width': str(border)}
+        if dashed:
+            attrs['stroke-dasharray'] = '7 5'
+        ET.SubElement(self.root, f'{{{NS}}}rect', attrs)
 
-    def text(name: str, x: int, y: int, content: str, size: int = 27, weight: str = "normal", fill: str = "#172b37") -> None:
-        node = ET.SubElement(root, f"{{{NS}}}text", {"id": name, "x": str(x), "y": str(y), "font-family": "DejaVu Sans, sans-serif", "font-size": str(size), "font-weight": weight, "fill": fill})
-        node.text = content
+    def text(self, name, x, y, content, size=20, bold=False):
+        ET.SubElement(self.root, f'{{{NS}}}text', {
+            'id': name, 'x': str(x), 'y': str(y), 'font-family': 'DejaVu Sans, sans-serif',
+            'font-size': str(size), 'font-weight': 'bold' if bold else 'normal',
+            'fill': '#111111'}).text = content
 
-    def arrow(name: str, x1: int, y1: int, x2: int, y2: int) -> None:
-        ET.SubElement(root, f"{{{NS}}}line", {"id": name, "x1": str(x1), "y1": str(y1), "x2": str(x2), "y2": str(y2), "stroke": "#304451", "stroke-width": "2.5", "marker-end": "url(#arrowhead)"})
+    def lines(self, name, x, y, contents, size=20, gap=31):
+        for i, text in enumerate(contents):
+            self.text(f'{name}-{i}', x, y + gap*i, text, size)
 
-    box("background", 0, 0, 1440, 880)
-    text("title", 44, 59, "Separate coordinate gains from support-selection gains", 35, "bold")
-    box("fixed-problem", 44, 90, 1352, 142, "#edf3f5")
-    text("fixed-label", 68, 127, "FIXED EXPLANATORY PROBLEM", 23, "bold")
-    text("fixed-response", 68, 173, "dₓ(v) = s(x) − s(x − v)", 31)
-    text("fixed-semantics", 655, 168, "predictor s  ·  target  ·  intervention law μₓ", 25)
-    text("fixed-information", 68, 213, "same k, Q  ·  development information D  ·  available context z  ·  fresh scoring displacements", 25)
-    for i, x in enumerate([262, 720, 1178]):
-        arrow(f"fixed-to-panel-{i}", x, 234, x, 270)
-    panel_x = [44, 502, 960]
-    for name, x in zip(["plain-union", "route", "matched-union"], panel_x):
-        box(name, x, 281, 436, 337)
-    text("a", 67, 325, "a   Plain union-OMP", 28, "bold")
-    text("b", 525, 325, "b   Context route", 28, "bold")
-    text("c", 983, 325, "c   Matched union", 28, "bold")
-    text("union-dictionary", 68, 378, "Ψ(v) = [A₀v; …; A(J−1)v]", 26)
-    text("union-search", 68, 424, "Search over all candidate atoms", 23)
-    text("union-limit", 68, 463, "At most k nonzeros in total", 23)
-    text("union-ambiguity-1", 68, 528, "Larger search space may change", 23)
-    text("union-ambiguity-2", 68, 564, "finite-query estimation error", 23)
-    text("route-selector", 527, 379, "(D, x, z, T_Q) → j, â", 27)
-    text("route-prediction", 527, 428, "Response prediction: âᵀAⱼv", 24)
-    text("route-support", 527, 468, "One block; at most k nonzeros", 23)
-    text("route-fixed-gate", 527, 530, "Choose j before scoring v", 23)
-    text("route-context", 527, 565, "Context constrains support", 23)
-    text("emulate-padding", 985, 379, "ã = [0; …; â; …; 0]", 28)
-    text("emulate-equality", 985, 429, "ãᵀΨ(v) = âᵀAⱼv", 31, "bold")
-    text("emulate-support", 985, 472, "Same total k; same Q queries", 23)
-    text("emulate-class-1", 985, 532, "Fixed dictionary does not mean", 23)
-    text("emulate-class-2", 985, 566, "fixed support or coefficients", 23)
-    arrow("route-to-emulator", 899, 642, 1163, 642)
-    text("emulation-label", 561, 652, "same rule + information", 24)
-    box("interpretation", 44, 682, 1352, 153, "#edf3f5")
-    text("interpretation-title", 68, 720, "DECISIVE CONTROL", 23, "bold")
-    text("interpretation-statement", 68, 758, "If b beats a but equals c, the contrast does not isolate an intrinsic routing advantage.", 25)
-    q_values = ", ".join(budgets)
-    text("recorded-outcome", 68, 801, f"Executed synthetic check: max |prediction(b) − prediction(c)| = {max_error:g};  Q = {q_values}.", 25)
-    text("footer", 45, 861, "Class containment is exact; practical cost and real-data coordinate benefits require separate evidence.", 23)
-    args.output.parent.mkdir(parents=True, exist_ok=True)
-    ET.ElementTree(root).write(args.output, encoding="utf-8", xml_declaration=True)
-    print(args.output)
+    def arrow(self, name, points, dashed=False):
+        attrs = {'id': name, 'points': ' '.join(f'{x},{y}' for x, y in points),
+                 'fill': 'none', 'stroke': '#222222', 'stroke-width': '1.8',
+                 'marker-end': 'url(#arrow)'}
+        if dashed:
+            attrs['stroke-dasharray'] = '7 5'
+        ET.SubElement(self.root, f'{{{NS}}}polyline', attrs)
+
+    def save(self, path):
+        path.parent.mkdir(parents=True, exist_ok=True)
+        ET.indent(self.root)
+        ET.ElementTree(self.root).write(path, encoding='utf-8', xml_declaration=True)
+        print(path)
 
 
-if __name__ == "__main__":
+def problem():
+    d = Diagram('Fixed-response problem and the controlled coordinate intervention', 770)
+    d.text('title', 30, 40, 'What changes when explanation coordinates change?', 27, True)
+    d.box('fixed-semantics', 30, 70, 1140, 100)
+    d.text('fixed-label', 50, 100, 'FIXED SEMANTICS AND INFORMATION', 19, True)
+    d.lines('fixed', 50, 130, [
+        'Frozen score s  ·  target t  ·  original-space law μₓ  ·  development data D  ·  context z',
+        'Coordinate budget k  ≠  response-query budget Q  ·  same independent-unit split'], 20, 27)
+    d.box('original-space', 30, 210, 330, 170)
+    d.text('original-title', 50, 244, 'Original-space responses', 21, True)
+    d.lines('original', 50, 283, ['Input x and displacement v', 'dₓ(v) = s(x) − s(x − v)', 'No coordinate-wise masking'])
+    d.box('construction', 420, 210, 330, 170)
+    d.text('construction-title', 440, 244, 'Construction transcript', 21, True)
+    d.lines('construction', 440, 283, ['T_Q = {(v_q, dₓ(v_q))}', 'Q perturbed scalar responses', 'One reusable base score s(x)'])
+    d.box('scoring', 810, 210, 360, 170)
+    d.text('scoring-title', 830, 244, 'Independent scoring', 21, True)
+    d.lines('scoring', 830, 283, ['Fresh v from the same μₓ', 'Separate scoring responses', 'Unavailable to online fitting'])
+    d.arrow('response-to-fit', [(360, 290), (420, 290)])
+    d.arrow('response-to-score', [(195, 210), (195, 193), (990, 193), (990, 210)])
+    d.box('variable', 30, 432, 440, 165, border=3)
+    d.text('variable-title', 50, 466, 'CONTROLLED INTERVENTION', 21, True)
+    d.lines('variable', 50, 505, ['Coordinate-learning objective m', 'Common coordinate family + decoder', 'Common inputs, responses and budgets'])
+    d.box('output', 540, 432, 630, 165)
+    d.text('output-title', 560, 466, 'Fitted prediction and observed loss', 21, True)
+    d.lines('output', 560, 505, ['A, selected support S, fitted coefficients â',
+        'd̂ₓ(v) = âᵀAv       with at most k nonzeros', 'Unit loss Lᵤ; paired Δ = Lᵤ(m) − Lᵤ(m₀)'], 20, 31)
+    d.arrow('transcript-to-output', [(585, 380), (585, 432)])
+    d.arrow('score-to-output', [(1020, 380), (1020, 432)])
+    d.arrow('intervention-to-output', [(470, 515), (540, 515)])
+    d.box('gap', 30, 640, 1140, 100, dashed=True)
+    d.text('gap-title', 50, 672, 'ATTRIBUTION GAP', 20, True)
+    d.lines('gap', 50, 704, ['A lower fresh loss may reflect approximation, support identification, or coefficient estimation.',
+        'Negative Δ favors the method; response fidelity alone does not establish physical meaning.'], 20, 26)
+    return d
+
+
+def method():
+    d = Diagram('Shared-coordinate method: training, selection and frozen evaluation', 1030)
+    d.text('title', 30, 40, 'Learn the shared basis; fit a new sparse decoder at each input', 25, True)
+    d.text('legend', 30, 74, 'Thin outline: inherited operation   ·   Heavy outline: learning intervention   ·   Dashed arrow: update', 19)
+    d.text('train-title', 30, 115, 'a  DEVELOPMENT TRAINING — no selection or test units', 22, True)
+    d.box('train-data', 30, 143, 290, 354)
+    d.text('train-data-title', 48, 177, 'Fixed response data', 20, True)
+    d.lines('train-data', 48, 219, ['Actual input x', 'Fit table: V, d  (Q)'], 19, 36)
+    d.text('outer-data-title', 48, 363, 'Fresh outer table', 20, True)
+    d.lines('outer-data', 48, 405, ['Vᵒᵘᵗ, dᵒᵘᵗ  (R responses)', 'Training information only'], 19, 36)
+    d.box('basis', 370, 143, 320, 170)
+    d.text('basis-title', 388, 177, 'Shared orthogonal basis', 20, True)
+    d.lines('basis', 388, 214, ['Aθ = exp(Sθ),  Sθ = −Sθᵀ', 'One basis across all inputs', 'Z = VAθᵀ; same raw response'])
+    d.box('decoder', 740, 143, 430, 170)
+    d.text('decoder-title', 758, 177, 'Inherited finite-query decoder', 20, True)
+    d.lines('decoder', 758, 214, ['Normalized greedy support (at most k)', 'Restricted ridge coefficients â_S', 'Positive λ; not a population oracle'])
+    d.arrow('training-data-flow', [(320, 230), (370, 230)])
+    d.arrow('training-basis-flow', [(690, 230), (740, 230)])
+    d.box('outer-objective', 370, 360, 800, 137, border=3)
+    d.text('outer-title', 388, 394, 'RESPONSE-DRIVEN OUTER OBJECTIVE', 21, True)
+    d.lines('outer', 388, 431, ['Fresh response error of the fitted Q-query decoder',
+        'Update θ through the current support branch; predictor s remains frozen'], 20, 33)
+    d.arrow('decoder-to-outer', [(960, 313), (960, 360)])
+    d.arrow('outer-update', [(530, 360), (530, 313)], True)
+    d.arrow('outer-responses', [(320, 425), (370, 425)])
+    d.lines('proxies', 30, 533, ['Matched outer-loss replacements: actual-input reconstruction / coefficient concentration.',
+        'All objectives retain the same downstream decoder and response-based selection.'], 19, 24)
+    d.text('selection-title', 30, 580, 'b  INDEPENDENT SELECTION — one deployment criterion', 22, True)
+    d.box('snapshots', 30, 606, 450, 112)
+    d.text('snapshots-title', 48, 642, 'Frozen candidate trajectories', 21, True)
+    d.lines('snapshots', 48, 678, ['Identity + prespecified checkpoints'], 19)
+    d.box('selection', 550, 606, 620, 112)
+    d.text('selection-box-title', 568, 642, 'Select by fresh response loss on separate units', 21, True)
+    d.lines('selection', 568, 678, ['Same rule for learned and fixed families; identity wins ties'], 19)
+    d.arrow('snapshot-to-selection', [(480, 663), (550, 663)])
+    d.arrow('training-to-snapshots', [(1170, 476), (1185, 476), (1185, 594), (256, 594), (256, 606)])
+    d.text('test-title', 30, 763, 'c  NEW INPUT / FINAL EVALUATION — no basis update', 22, True)
+    d.box('freeze', 30, 790, 315, 138)
+    d.text('freeze-title', 48, 825, 'Frozen basis A', 21, True)
+    d.lines('freeze', 48, 862, ['New x and Q responses', 'Fit only support + coefficients'], 19)
+    d.box('prediction', 400, 790, 325, 138)
+    d.text('prediction-title', 418, 825, 'Response prediction', 20, True)
+    d.lines('prediction', 418, 862, ['d̂ₓ(v) = âᵀAv', 'No evaluation-response access'], 19)
+    d.box('evaluation', 780, 790, 390, 138)
+    d.text('evaluation-title', 798, 825, 'Fresh scoring only', 21, True)
+    d.lines('evaluation', 798, 862, ['Independent displacements → loss', 'Aggregate by unit → paired Δ'], 19)
+    d.arrow('selected-to-test', [(1170, 678), (1185, 678), (1185, 778), (186, 778), (186, 790)])
+    d.arrow('fit-to-predict', [(345, 855), (400, 855)])
+    d.arrow('predict-to-evaluate', [(725, 855), (780, 855)])
+    d.lines('footer', 30, 967, ['External control: âᵀAⱼv = ãᵀΨ(v), with ã = [0; …; â; …; 0] and the same (k, Q).',
+        'A schematic specifies information flow; real-data improvement remains an empirical question.'], 19, 29)
+    return d
+
+
+def main():
+    output = Path('paper/assets/figures')
+    problem().save(output/'motivation.svg')
+    method().save(output/'method_overview.svg')
+
+
+if __name__ == '__main__':
     main()

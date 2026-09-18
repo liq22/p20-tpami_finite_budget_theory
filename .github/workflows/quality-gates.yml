@@ -62,7 +62,7 @@ jobs:
         run: bash scripts/build_paper.sh build/p20
       - name: Check regenerated SVG and whitespace
         run: |
-          git diff --exit-code -- paper/assets/figures/motivation.svg
+          git diff --exit-code -- paper/assets/figures/motivation.svg paper/assets/figures/method_overview.svg
           git diff --check
       - name: Check references and editable vector objects
         run: |
@@ -74,11 +74,12 @@ jobs:
           python - <<'PY'
           from pathlib import Path
           import xml.etree.ElementTree as ET
-          path = Path('paper/assets/figures/motivation.svg')
-          text = path.read_text()
-          root = ET.fromstring(text)
-          tags = [e.tag.rsplit('}', 1)[-1] for e in root.iter()]
-          assert tags.count('text') >= 20 and tags.count('rect') >= 3
-          assert 'image' not in tags and 'base64' not in text
-          print('Reference keys and independently editable SVG objects verified.')
+          for name in ('motivation', 'method_overview'):
+              path = Path('paper/assets/figures') / f'{name}.svg'
+              text = path.read_text()
+              root = ET.fromstring(text)
+              tags = [e.tag.rsplit('}', 1)[-1] for e in root.iter()]
+              assert tags.count('text') >= 20 and tags.count('rect') >= 3
+              assert 'image' not in tags and 'base64' not in text
+          print('Reference keys and both independently editable SVGs verified.')
           PY
