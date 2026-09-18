@@ -71,9 +71,12 @@ unseen by both optimization and selection.
 
 Run `bash scripts/run_response_basis.sh test` before training. Then use `demo`
 for a labelled synthetic diagnostic or `study --input DATA.npz --output DIR`
-for supplied scalar response data. All data remain local. Output directories
-are never overwritten. Test data affect reported metrics only, not the selected
-basis. A required method or invalid scientific input fails explicitly.
+for supplied scalar response data. The runner defaults to
+`--aggregation mean`; `--aggregation worst_group` is an explicit robustness
+ablation and is used for both training and candidate selection. All data remain
+local. Output directories are never overwritten. Test data affect reported
+metrics only, not the selected basis. A required method or invalid scientific
+input fails explicitly.
 
 The NPZ holds train/select/test prefixes, each with:
 `fit_v [N,Q,p]`, `fit_d [N,Q]`, `score_v [N,R,p]`, `score_d [N,R]`,
