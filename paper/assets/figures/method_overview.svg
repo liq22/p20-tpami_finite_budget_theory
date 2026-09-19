@@ -64,5 +64,5 @@
   <polyline id="fit-to-predict" points="345,855 400,855" fill="none" stroke="#222222" stroke-width="1.8" marker-end="url(#arrow)" />
   <polyline id="predict-to-evaluate" points="725,855 780,855" fill="none" stroke="#222222" stroke-width="1.8" marker-end="url(#arrow)" />
   <text id="footer-0" x="30" y="967" font-family="DejaVu Sans, sans-serif" font-size="19" font-weight="normal" fill="#111111">External control: âᵀAⱼv = ãᵀΨ(v), with ã = [0; …; â; …; 0] and the same (k, Q).</text>
-  <text id="footer-1" x="30" y="996" font-family="DejaVu Sans, sans-serif" font-size="19" font-weight="normal" fill="#111111">A schematic specifies information flow; real-data improvement remains an empirical question.</text>
+  <text id="footer-1" x="30" y="996" font-family="DejaVu Sans, sans-serif" font-size="19" font-weight="normal" fill="#111111">Construction chooses the support; independent scoring measures response fidelity.</text>
 </svg>

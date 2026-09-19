@@ -46,13 +46,9 @@ class ResponseBatch:
             raise ValueError("groups must be integer labels for each independent unit")
         if len(ids) != len(vf) or len(set(ids)) != len(ids):
             raise ValueError("one unique unit_id is required for each row")
-        # Exact shared nonzero queries cause evaluation leakage. Fresh draws must
-        # also be independent by design; this guard cannot prove independence.
-        for a, b in zip(vf, vs):
-            overlap = (a[:, None, :] == b[None, :, :]).all(dim=-1)
-            nonzero = a.ne(0).any(dim=-1)
-            if (overlap & nonzero[:, None]).any():
-                raise ValueError("fit and score reuse a nonzero intervention")
+        # Independence is a sampling-design requirement, not numerical inequality.
+        # Independent discrete draws can coincide. Removing or resampling matches
+        # changes the scoring law. Data collection must use separate draws.
         return cls(vf, df, vs, ds, g.to(torch.int64), ids)
 
 

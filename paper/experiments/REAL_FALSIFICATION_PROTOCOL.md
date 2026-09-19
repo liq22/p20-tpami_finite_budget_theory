@@ -32,9 +32,15 @@ input with a rule frozen before outcome inspection. A multiple-window study
 needs explicit within-unit weighting, not window IDs masquerading as unit IDs.
 No test outcome may choose preprocessing, training groups, candidates or priors.
 
+Draw construction and scoring perturbations independently conditional on x.
+Do not reject equal-valued draws from a discrete law or resample them to enforce
+numerical distinctness. Such conditioning changes the scoring distribution.
+Distinct values alone do not establish independence; copied construction tables
+are not independent scoring data.
+
 ## Primary estimand and analysis lock
 
-For fixed within-unit weights summing to one,
+For fixed nonnegative within-unit weights summing to one,
 
 $$
 L_u(m)=\sum_j w_{uj}\frac1R\sum_r
@@ -98,9 +104,13 @@ from that degenerate law. **Concentration uses full fitted coefficients**, not
 an already k-sparse decoder. Do not give this proxy extra queries or gradients.
 
 These are matched-family controls, not faithful TRIM or AWD implementations.
-`train_basis` implements all three at library level. The existing response-only
-CLI is not yet the complete three-objective real-data runner; the next execution
-slice must supply actual input vectors and retain unit identities.
+The existing runner now executes all three objectives with `--matched-objectives`
+and actual `train_x` aligned to `train_unit_ids`. Use `--aggregation mean` for
+the minimal mean-risk study. See `paper/method/RESPONSE_BASIS.md` for the exact
+NPZ fields and command. The entry consumes supplied fixed responses; it does not
+collect real data, establish independence of IDs, or execute Tiers B and C.
+The spherical-input synthetic diagnostic is an execution/control test, not a
+substitute for informative real-input reconstruction or real-data C2 evidence.
 
 ## Tier B: support controls and mechanism attribution
 

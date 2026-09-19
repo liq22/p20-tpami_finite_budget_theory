@@ -1,0 +1,98 @@
+{
+  "evidence_kind": "synthetic_only",
+  "seed": 19,
+  "features": 4,
+  "k": 1,
+  "fit_queries": 24,
+  "score_queries": 48,
+  "ridge": 0.0001,
+  "optimization_steps": 80,
+  "aggregation": "mean",
+  "matched_objectives": true,
+  "primary_reference": "coefficient_sparsity_selected",
+  "independent_test_results": {
+    "learned_selected": {
+      "mean_response_mse": 5.7859595378613675e-05,
+      "group_response_mse": {
+        "0": 9.79625720655486e-05,
+        "1": 1.7756618691678724e-05
+      }
+    },
+    "reconstruction_selected": {
+      "mean_response_mse": 0.0016412358483061038,
+      "group_response_mse": {
+        "0": 0.0022781946485443344,
+        "1": 0.0010042770480678729
+      }
+    },
+    "coefficient_sparsity_selected": {
+      "mean_response_mse": 5.732089893958622e-05,
+      "group_response_mse": {
+        "0": 9.707353501281915e-05,
+        "1": 1.7568262866353307e-05
+      }
+    },
+    "identity": {
+      "mean_response_mse": 0.006601735870767763,
+      "group_response_mse": {
+        "0": 0.009311833725313984,
+        "1": 0.0038916380162215404
+      }
+    },
+    "dct": {
+      "mean_response_mse": 0.0055559469155895495,
+      "group_response_mse": {
+        "0": 0.007830555061634527,
+        "1": 0.0032813387695445717
+      }
+    },
+    "best_fixed_single": {
+      "mean_response_mse": 0.001058112102890632,
+      "group_response_mse": {
+        "0": 0.0015083794962230616,
+        "1": 0.0006078447095582022
+      }
+    }
+  },
+  "primary_paired_effect": {
+    "n_units": 64,
+    "mean_difference": 5.386964390274398e-07,
+    "confidence_interval_95": [
+      -1.0280295640159047e-07,
+      1.2758767844321443e-06
+    ],
+    "bootstrap_resamples": 2000,
+    "direction": "negative favors response",
+    "scope": "unit-population mean conditional on frozen development and predictor"
+  },
+  "best_fixed_candidate_name": "random_orthogonal_4",
+  "orthogonality_error": 1.1102230246251565e-15,
+  "predictor_access": {
+    "train": {
+      "fit_forward_examples": 600,
+      "score_forward_examples": 1152,
+      "total_forward_examples": 1752,
+      "backward_predictor_examples": 0
+    },
+    "select": {
+      "fit_forward_examples": 600,
+      "score_forward_examples": 1152,
+      "total_forward_examples": 1752,
+      "backward_predictor_examples": 0
+    },
+    "test": {
+      "fit_forward_examples": 1600,
+      "score_forward_examples": 3072,
+      "total_forward_examples": 4672,
+      "backward_predictor_examples": 0
+    }
+  },
+  "command": "python src/S03_Scripts/run_response_basis.py --synthetic --matched-objectives --aggregation mean --steps 80 --output results/matched_synthetic",
+  "learning_rate": 0.04,
+  "n_train": 24,
+  "n_selection": 24,
+  "n_test": 64,
+  "learned_candidate_count": 9,
+  "fixed_candidate_count": 10,
+  "claim": "This synthetic comparison does not establish an incremental response-objective benefit or equivalence. Actual inputs are spherical here, so reconstruction has an invariant population objective. Real-data and structured-support tests remain separate."
+}

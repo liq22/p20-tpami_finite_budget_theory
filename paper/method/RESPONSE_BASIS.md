@@ -42,7 +42,9 @@ a population-gradient formula across support discontinuities.
 Reconstruction requires `inputs=[N,p]` explicitly. It never silently substitutes
 perturbations for real inputs. Full orthogonal reconstruction is zero for every
 A; truncation of a spherically symmetric perturbation has an invariant population
-loss. Neither makes a discriminating reconstruction baseline.
+loss. Neither makes a discriminating reconstruction baseline. Actual inputs can
+also be spherical, as in the synthetic diagnostic; using actual x does not by
+itself guarantee that the reconstruction objective has a population preference.
 
 The coefficient proxy uses full ridge coefficients, not an already k-sparse
 vector. Its denominator is ||beta_hat||^2; zero beta_hat gives zero loss by
@@ -53,64 +55,96 @@ reproductions of TRIM, AWD, or task-driven dictionary learning. All methods have
 the same available inputs/responses, but intentionally use different training
 losses. All candidates are selected by response loss.
 
-## Library entry and unchanged default
+## Executable matched study
 
-Existing calls to `train_basis(...)` retain `objective='response'` and
-`aggregation='worst_group'`. New explicit values are:
+The existing response-only mode is retained. Add `--matched-objectives` to execute
+all three training objectives, common response-based selection and paired test
+scoring. The minimal mean-objective diagnostic is:
 
-```python
-candidates, history = train_basis(
-    train, k=k, ridge=ridge, steps=steps, learning_rate=learning_rate,
-    checkpoint_every=checkpoint_every,
-    objective="reconstruction", inputs=train_x, aggregation="mean",
-)
-A, selected_index, selection_losses = select_basis(
-    candidates, selection, k=k, ridge=ridge, aggregation="mean",
-)
+```bash
+python src/S03_Scripts/run_response_basis.py \
+  --synthetic --matched-objectives --aggregation mean \
+  --steps 80 --output results/matched_synthetic
 ```
 
-`train_x` must contain the actual fixed-preprocessing input for each training
-unit in exactly the same order as `train.unit_ids`. The shared three-objective
-study calls the same functions with the three declared objective names. The
-existing command-line runner remains a response-only study; it does not yet
-load input vectors or execute the complete three-objective real-data protocol.
+For supplied fixed-response data:
+
+```bash
+python src/S03_Scripts/run_response_basis.py \
+  --input DATA.npz --matched-objectives --aggregation mean \
+  --k 1 --steps 80 --ridge 1e-4 --learning-rate 0.04 \
+  --output results/matched_real
+```
+
+The second command consumes data; it does not download a dataset, train a
+predictor, or establish that the supplied data are real. `DATA.npz` contains the
+existing train/select/test-prefixed response arrays described below, plus
+`train_x [N_train,p]` in exactly `train_unit_ids` order. Missing actual inputs fail;
+there is no perturbation or synthetic substitute. The current study fixes the
+same construction Q and feature coordinates across all three splits.
+
+The response, reconstruction and coefficient objectives have the same
+initialization, optimizer steps, checkpoint schedule and aggregation. Candidate
+families are frozen before selection. The primary reference is the better
+response-selected proxy on development-selection units, fixed before test loss
+is computed. Identity, DCT and best selected fixed basis remain separate controls.
+The mean step budget is not a claim of equal wall time or FLOPs across objectives.
 
 `aggregation='mean'` averages unit losses. `worst_group` maximizes predefined
 group-mean excess over each objective's identity loss. Use the same aggregation
 for every objective and selection family. One group reduces both choices to the
-same mean criterion. Multi-group excess is not worst absolute risk.
+same mean criterion. Multi-group excess is not worst absolute risk. Existing
+library calls retain `objective='response'` and `aggregation='worst_group'`.
+
+Outputs are `responses.csv` (one row per unit and method), `basis.npz` (selected
+bases), and `summary.json` (candidate selection, shared query counts, test MSE and
+the primary paired interval). The interval uses 2,000 paired unit resamples and
+is conditional on the frozen development result and predictor. It does not
+include between-training-seed uncertainty. A stratified target requires a
+corresponding prespecified analysis rather than silently reusing pooled inference.
 
 ## Independence and output semantics
 
 Construct disjoint train, selection and final-test `ResponseBatch` objects.
-Each existing reference row is one independent unit with fit/scoring arrays:
+Each reference row is one independent unit with fit/scoring arrays:
 `fit_v [N,Q,p]`, `fit_d [N,Q]`, `score_v [N,R,p]`, `score_d [N,R]`,
 `groups [N]`, and unique `unit_ids [N]`.
 
 For a first real experiment, use one observation per unit selected by a frozen
 rule. A multiple-window extension must first average within each unit, then
 compute uncertainty over units; relabeling windows as independent rows is not
-permitted. The current shape checks do not establish biological or mechanical
+permitted. The shape checks do not establish biological or mechanical
 independence of supplied IDs.
+
+Construction and scoring perturbations must be sampled independently conditional
+on x. Independent draws from a discrete law may have equal numerical values;
+those coincidences are not leakage. The loader neither rejects nor resamples
+matches, because doing so would condition the scoring law on the fit table.
+Conversely, value inequality cannot certify independent sampling. The data
+producer remains responsible for separate draws, not copied construction tables.
 
 Outer training responses train A. Selection responses choose among a finite
 family frozen before selection inspection. Test scoring responses never choose
 A, k, Q, lambda or the reference. Including identity does not certify population
 no-harm for unbounded raw squared loss.
 
-The best fixed single basis in the existing runner is selected from identity,
-DCT, and eight seed-fixed random orthogonal bases. The exact union emulator is
-an equality control for a routed decoder, not a comparator expected to be beaten.
+The best fixed single basis is selected from identity, DCT, and eight seed-fixed
+random orthogonal bases. The exact union emulator is an equality control for a
+routed decoder, not a comparator expected to be beaten. Structured-support and
+native-method comparisons are separate from the matched-objective CLI.
 
 ## Direct validation and remaining evidence
 
 ```bash
 python -m unittest discover -s src/S04_Tests -p 'test_response_basis.py' -v
 python -m unittest discover -s src/S04_Tests -p 'test_response_objectives.py' -v
+python -m unittest discover -s src/S04_Tests -p 'test_response_runner.py' -v
 ```
 
-The added tests cover actual-input reconstruction, its spherical degeneracy,
-full-Q coefficient estimation, proxy non-vacuity, branch gradients, common
-candidate selection, and explicit aggregation. They validate method semantics;
-they are not evidence of a real-data C2 advantage. Execute
-`paper/experiments/REAL_FALSIFICATION_PROTOCOL.md` next.
+The tests protect reconstruction and coefficient semantics, branch gradients,
+common selection, discrete-draw coincidences, the three-objective entry, and
+invariance of selected bases/reference to changed final-test responses. They are
+not real-data validation or a replacement for the full repository checks.
+The executed synthetic diagnostic and its inconclusive paired objective contrast
+are recorded in `paper/experiments/SCIENTIFIC_CHAIN.md` and manuscript Section 5.2.
+Execute `paper/experiments/REAL_FALSIFICATION_PROTOCOL.md` next on real units.

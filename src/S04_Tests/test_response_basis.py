@@ -66,12 +66,28 @@ class ModelTests(unittest.TestCase):
         with torch.no_grad(): m.angles.fill_(0.3)
         self.assertTrue(torch.allclose(f(m.inverse(m(x))),f(x),atol=1e-12))
 
-    def test_disjointness_and_reused_queries_fail(self):
+    def test_independent_units_must_be_disjoint(self):
         b=batch(10)
         require_disjoint(b,batch(11))
         with self.assertRaises(ValueError): require_disjoint(b,b)
-        with self.assertRaises(ValueError):
-            ResponseBatch.build(b.fit_v,b.fit_d,b.fit_v,b.fit_d,b.groups,b.unit_ids)
+
+    def test_independent_discrete_draws_may_coincide(self):
+        fit=torch.randint(0,2,(1,32,2),generator=torch.Generator().manual_seed(1)).double()
+        score=torch.randint(0,2,(1,32,2),generator=torch.Generator().manual_seed(2)).double()
+        overlap=(fit[0,:,None,:]==score[0,None,:,:]).all(-1)
+        self.assertTrue((overlap & fit[0].ne(0).any(-1)[:,None]).any())
+        b=ResponseBatch.build(fit,fit.sum(-1),score,score.sum(-1),[0],['u'])
+        self.assertTrue(torch.equal(b.score_v,score))
+
+    def test_discarding_collisions_changes_binary_scoring_law(self):
+        # Uniform binary scoring with fit v=1; predictor response d(v)=v and
+        # zero decoder. Filtering scoring v=1 changes risk from 1/2 to zero.
+        fit=torch.tensor([[[1.,0.]]],dtype=torch.float64)
+        score=torch.tensor([[[0.,0.],[1.,0.]]],dtype=torch.float64)
+        b=ResponseBatch.build(fit,fit.sum(-1),score,score.sum(-1),[0],['u'])
+        self.assertEqual(float(b.score_d.square().mean()),.5)
+        filtered=score[0][score[0,:,0]!=fit[0,0,0]]
+        self.assertEqual(float(filtered.sum(-1).square().mean()),0.)
 
     def test_invalid_parameters_and_scaling_fail(self):
         b=batch(3)

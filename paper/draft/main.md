@@ -6,7 +6,7 @@ lang: en-US
 
 # Abstract
 
-A change of coordinates can make an explanation compact without changing the function being explained. Whether it improves prediction of that function's responses depends on the coordinate budget, query budget, and information available to the estimator. We study sparse linear decoders of a frozen predictor's responses to a common original-space intervention law. A projection characterization separates the invariant full-class residual from coordinate approximation, support-search, and coefficient-estimation errors. A fixed union dictionary also contains every single-basis sparse decoder and can reproduce any routed decoder given the same information. These relationships motivate learning shared orthogonal coordinates through the fresh-response error of the actual finite-query decoder. Matched reconstruction and coefficient-concentration objectives isolate this choice of learning target, while information-matched support controls distinguish coordinate effects from search restrictions. In a controlled nonlinear example, a context route improves over plain union-OMP at three fitting queries, but its same-information union emulator produces identical predictions. This result establishes a comparison boundary rather than a real-data advantage of learned coordinates. The remaining empirical question is when direct response training improves independently evaluated finite-budget prediction beyond matched objectives and support priors.
+A change of coordinates can make an explanation compact without changing the function being explained. Whether it improves prediction of that function's responses depends on the coordinate budget, query budget, and information available to the estimator. We study sparse linear decoders of a frozen predictor's responses to a common original-space intervention law. A projection characterization separates the invariant full-class residual from coordinate approximation, support-search, and coefficient-estimation errors. A fixed union dictionary also contains every single-basis sparse decoder and can reproduce any routed decoder given the same information. These relationships motivate learning shared orthogonal coordinates through the fresh-response error of the actual finite-query decoder. Matched reconstruction and coefficient-concentration objectives isolate this choice of learning target, while information-matched support controls distinguish coordinate effects from search restrictions. In a controlled nonlinear example, a context route improves over plain union-OMP at three fitting queries, but its same-information union emulator produces identical predictions. A separate matched-objective diagnostic does not establish an incremental benefit of response training over coefficient concentration. These results establish comparison boundaries rather than a real-data advantage of learned coordinates. The remaining empirical question is when direct response training improves independently evaluated finite-budget prediction beyond matched objectives and support priors.
 
 # 1. Introduction
 
@@ -89,9 +89,9 @@ R_k^*(A;x)=\inf_{\|a\|_0\le k}R(A,a;x),\qquad
 \mathcal R_{k,Q}(m)=\mathbb E_{x,T_Q}[R(A_m,\widehat a_m;x)]. \tag{5}
 $$
 
-The expectation in $\mathcal R_{k,Q}$ is conditional on the frozen development outcome and includes construction randomness. An empirical fitting residual does not estimate the fresh risk after support selection. All matched methods use the same response tables, including common fresh scoring displacements independent of their construction transcript.
+The expectation in $\mathcal R_{k,Q}$ is conditional on the frozen development outcome and includes construction randomness. An empirical fitting residual does not estimate the fresh risk after support selection. All matched methods use the same response tables, including common fresh scoring displacements independent of their construction transcript. Independence concerns the sampling process conditional on $x$, not numerical distinctness: independent draws from a discrete intervention law may coincide. Rejecting or resampling scoring draws merely because their values appeared in the construction table changes the scoring law.
 
-The independent sampling unit $u$ is a recording, subject, patient, machine run, or other prespecified non-overlapping entity. For $W_u$ observations within that unit, let fixed weights $w_{uj}$ sum to one. The unit loss and paired effect are
+The independent sampling unit $u$ is a recording, subject, patient, machine run, or other prespecified non-overlapping entity. For $W_u$ observations within that unit, let fixed nonnegative weights $w_{uj}$ sum to one. The unit loss and paired effect are
 
 $$
 L_u(m)=\sum_{j=1}^{W_u}w_{uj}\frac1R\sum_{r=1}^R
@@ -303,8 +303,23 @@ The constructed predictor has 12 signal coordinates and one unperturbed context 
 
 The entries are mean response MSE, not real time-series benchmark results. At $Q=3$, identity and the selection-chosen best single basis have MSE $0.233528$ and $0.122438$, respectively. The context route also improves on plain union-OMP. However, the same-information union reproduces it with maximum absolute prediction difference exactly zero at every tested budget. Shuffling context increases error. Thus this comparison establishes neither a routing-class advantage nor a benefit independent of context-conditioned support restriction. Plain union catches up at the larger tested budgets, but the example does not establish a general convergence rate.
 
-## 5.2 Scope of the supported conclusion
+## 5.2 A matched-objective diagnostic
 
-The geometry and emulation statements apply under their stated function-class and information assumptions. The synthetic comparison is a falsification control for a broad interpretation of routing, not a validation of shared-coordinate learning across domains. A practical coordinate claim requires independent evidence against matched objectives and structured-support controls. Response MSE supports prediction of the declared model-response function; broader temporal localization, signed-attribution, or physical-meaning claims require compatible external evidence. A null or reversed C2 result must narrow the conclusion rather than prompt a retrospective change of model, data split, or primary budget.
+A separate four-dimensional diagnostic tests the objective contrast in Section 3.3. The fixed score is $s(x)=\tanh(w^\top x)$ with $w=(0.6,-0.5,0.4,0.3)$ and $x\sim\mathcal N(0,0.4^2I)$. Two equally represented strata use Gaussian displacement scales $0.15$ and $0.0975$. Every method shares 24 training units, 24 selection units, and 64 test units, with $k=1$, $Q=24$, $R=48$, and $\lambda=10^{-4}$. Each learned objective uses 80 Adam steps at learning rate $0.04$, identity initialization, and nine candidates comprising identity and every tenth checkpoint. Training and selection use mean loss. The seed is 19. The ten-member fixed family is selected independently by the same response criterion.
+
+| Coordinate objective or baseline | Mean test response MSE |
+|---|---:|
+| Identity | $6.601736\times10^{-3}$ |
+| DCT | $5.555947\times10^{-3}$ |
+| Best selected fixed basis | $1.058112\times10^{-3}$ |
+| Actual-input reconstruction | $1.641236\times10^{-3}$ |
+| Coefficient concentration | $5.732090\times10^{-5}$ |
+| Direct response training | $5.785960\times10^{-5}$ |
+
+Development selection chooses coefficient concentration as the primary matched reference before test losses are evaluated. The paired mean difference, response minus reference, is $5.386964\times10^{-7}$; its 95% unit-bootstrap percentile interval from 2,000 resamples is $[-1.028030\times10^{-7},1.275877\times10^{-6}]$. This diagnostic does not establish an incremental response-objective benefit despite the reduction relative to identity. The interval also does not establish equivalence. The input distribution is spherical, so the reconstruction objective is population-rotation-invariant in this particular diagnostic; its fitted variation does not constitute evidence against informative reconstruction on non-spherical real inputs. The result concerns one constructed score and budget, not real time-series performance or a general absence of benefit.
+
+## 5.3 Scope of the supported conclusion
+
+The geometry and emulation statements apply under their stated function-class and information assumptions. The first synthetic comparison is a falsification control for a broad interpretation of routing; the second tests matched objectives without establishing an incremental response-training benefit. Neither validates shared-coordinate learning across domains. A practical coordinate claim requires independent evidence against matched objectives and structured-support controls. Response MSE supports prediction of the declared model-response function; broader temporal localization, signed-attribution, or physical-meaning claims require compatible external evidence. A null or reversed C2 result must narrow the conclusion rather than prompt a retrospective change of model, data split, or primary budget.
 
 # References

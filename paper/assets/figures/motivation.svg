@@ -11,12 +11,12 @@
   <rect id="fixed-semantics" x="30" y="70" width="1140" height="100" fill="#ffffff" stroke="#222222" stroke-width="1.5" />
   <text id="fixed-label" x="50" y="100" font-family="DejaVu Sans, sans-serif" font-size="19" font-weight="bold" fill="#111111">FIXED SEMANTICS AND INFORMATION</text>
   <text id="fixed-0" x="50" y="130" font-family="DejaVu Sans, sans-serif" font-size="20" font-weight="normal" fill="#111111">Frozen score s  ·  target t  ·  original-space law μₓ  ·  development data D  ·  context z</text>
-  <text id="fixed-1" x="50" y="157" font-family="DejaVu Sans, sans-serif" font-size="20" font-weight="normal" fill="#111111">Coordinate budget k  ≠  response-query budget Q  ·  same independent-unit split</text>
+  <text id="fixed-1" x="50" y="157" font-family="DejaVu Sans, sans-serif" font-size="20" font-weight="normal" fill="#111111">Coordinate budget k  ·  response-query budget Q  ·  same independent-unit split</text>
   <rect id="original-space" x="30" y="210" width="330" height="170" fill="#ffffff" stroke="#222222" stroke-width="1.5" />
   <text id="original-title" x="50" y="244" font-family="DejaVu Sans, sans-serif" font-size="21" font-weight="bold" fill="#111111">Original-space responses</text>
   <text id="original-0" x="50" y="283" font-family="DejaVu Sans, sans-serif" font-size="20" font-weight="normal" fill="#111111">Input x and displacement v</text>
   <text id="original-1" x="50" y="314" font-family="DejaVu Sans, sans-serif" font-size="20" font-weight="normal" fill="#111111">dₓ(v) = s(x) − s(x − v)</text>
-  <text id="original-2" x="50" y="345" font-family="DejaVu Sans, sans-serif" font-size="20" font-weight="normal" fill="#111111">No coordinate-wise masking</text>
+  <text id="original-2" x="50" y="345" font-family="DejaVu Sans, sans-serif" font-size="20" font-weight="normal" fill="#111111">Same raw-space law for all A</text>
   <rect id="construction" x="420" y="210" width="330" height="170" fill="#ffffff" stroke="#222222" stroke-width="1.5" />
   <text id="construction-title" x="440" y="244" font-family="DejaVu Sans, sans-serif" font-size="21" font-weight="bold" fill="#111111">Construction transcript</text>
   <text id="construction-0" x="440" y="283" font-family="DejaVu Sans, sans-serif" font-size="20" font-weight="normal" fill="#111111">T_Q = {(v_q, dₓ(v_q))}</text>

@@ -65,10 +65,10 @@ def problem():
     d.text('fixed-label', 50, 100, 'FIXED SEMANTICS AND INFORMATION', 19, True)
     d.lines('fixed', 50, 130, [
         'Frozen score s  ·  target t  ·  original-space law μₓ  ·  development data D  ·  context z',
-        'Coordinate budget k  ≠  response-query budget Q  ·  same independent-unit split'], 20, 27)
+        'Coordinate budget k  ·  response-query budget Q  ·  same independent-unit split'], 20, 27)
     d.box('original-space', 30, 210, 330, 170)
     d.text('original-title', 50, 244, 'Original-space responses', 21, True)
-    d.lines('original', 50, 283, ['Input x and displacement v', 'dₓ(v) = s(x) − s(x − v)', 'No coordinate-wise masking'])
+    d.lines('original', 50, 283, ['Input x and displacement v', 'dₓ(v) = s(x) − s(x − v)', 'Same raw-space law for all A'])
     d.box('construction', 420, 210, 330, 170)
     d.text('construction-title', 440, 244, 'Construction transcript', 21, True)
     d.lines('construction', 440, 283, ['T_Q = {(v_q, dₓ(v_q))}', 'Q perturbed scalar responses', 'One reusable base score s(x)'])
@@ -144,7 +144,7 @@ def method():
     d.arrow('fit-to-predict', [(345, 855), (400, 855)])
     d.arrow('predict-to-evaluate', [(725, 855), (780, 855)])
     d.lines('footer', 30, 967, ['External control: âᵀAⱼv = ãᵀΨ(v), with ã = [0; …; â; …; 0] and the same (k, Q).',
-        'A schematic specifies information flow; real-data improvement remains an empirical question.'], 19, 29)
+        'Construction chooses the support; independent scoring measures response fidelity.'], 19, 29)
     return d
 
 
