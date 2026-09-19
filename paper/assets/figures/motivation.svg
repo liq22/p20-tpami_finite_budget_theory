@@ -1,0 +1,49 @@
+<?xml version='1.0' encoding='utf-8'?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 770" width="180mm" height="115.5mm" role="img">
+  <title>Fixed-response problem and the controlled coordinate intervention</title>
+  <defs>
+    <marker id="arrow" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto" markerUnits="userSpaceOnUse">
+      <path d="M0,0 L8,4 L0,8 Z" fill="#222222" />
+    </marker>
+  </defs>
+  <rect id="canvas" x="0" y="0" width="1200" height="770" fill="#ffffff" stroke="#222222" stroke-width="0" />
+  <text id="title" x="30" y="40" font-family="DejaVu Sans, sans-serif" font-size="27" font-weight="bold" fill="#111111">What changes when explanation coordinates change?</text>
+  <rect id="fixed-semantics" x="30" y="70" width="1140" height="100" fill="#ffffff" stroke="#222222" stroke-width="1.5" />
+  <text id="fixed-label" x="50" y="100" font-family="DejaVu Sans, sans-serif" font-size="19" font-weight="bold" fill="#111111">FIXED SEMANTICS AND INFORMATION</text>
+  <text id="fixed-0" x="50" y="130" font-family="DejaVu Sans, sans-serif" font-size="20" font-weight="normal" fill="#111111">Frozen score s  ·  target t  ·  original-space law μₓ  ·  development data D  ·  context z</text>
+  <text id="fixed-1" x="50" y="157" font-family="DejaVu Sans, sans-serif" font-size="20" font-weight="normal" fill="#111111">Coordinate budget k  ·  response-query budget Q  ·  same independent-unit split</text>
+  <rect id="original-space" x="30" y="210" width="330" height="170" fill="#ffffff" stroke="#222222" stroke-width="1.5" />
+  <text id="original-title" x="50" y="244" font-family="DejaVu Sans, sans-serif" font-size="21" font-weight="bold" fill="#111111">Original-space responses</text>
+  <text id="original-0" x="50" y="283" font-family="DejaVu Sans, sans-serif" font-size="20" font-weight="normal" fill="#111111">Input x and displacement v</text>
+  <text id="original-1" x="50" y="314" font-family="DejaVu Sans, sans-serif" font-size="20" font-weight="normal" fill="#111111">dₓ(v) = s(x) − s(x − v)</text>
+  <text id="original-2" x="50" y="345" font-family="DejaVu Sans, sans-serif" font-size="20" font-weight="normal" fill="#111111">Same raw-space law for all A</text>
+  <rect id="construction" x="420" y="210" width="330" height="170" fill="#ffffff" stroke="#222222" stroke-width="1.5" />
+  <text id="construction-title" x="440" y="244" font-family="DejaVu Sans, sans-serif" font-size="21" font-weight="bold" fill="#111111">Construction transcript</text>
+  <text id="construction-0" x="440" y="283" font-family="DejaVu Sans, sans-serif" font-size="20" font-weight="normal" fill="#111111">T_Q = {(v_q, dₓ(v_q))}</text>
+  <text id="construction-1" x="440" y="314" font-family="DejaVu Sans, sans-serif" font-size="20" font-weight="normal" fill="#111111">Q perturbed scalar responses</text>
+  <text id="construction-2" x="440" y="345" font-family="DejaVu Sans, sans-serif" font-size="20" font-weight="normal" fill="#111111">One reusable base score s(x)</text>
+  <rect id="scoring" x="810" y="210" width="360" height="170" fill="#ffffff" stroke="#222222" stroke-width="1.5" />
+  <text id="scoring-title" x="830" y="244" font-family="DejaVu Sans, sans-serif" font-size="21" font-weight="bold" fill="#111111">Independent scoring</text>
+  <text id="scoring-0" x="830" y="283" font-family="DejaVu Sans, sans-serif" font-size="20" font-weight="normal" fill="#111111">Fresh v from the same μₓ</text>
+  <text id="scoring-1" x="830" y="314" font-family="DejaVu Sans, sans-serif" font-size="20" font-weight="normal" fill="#111111">Separate scoring responses</text>
+  <text id="scoring-2" x="830" y="345" font-family="DejaVu Sans, sans-serif" font-size="20" font-weight="normal" fill="#111111">Unavailable to online fitting</text>
+  <polyline id="response-to-fit" points="360,290 420,290" fill="none" stroke="#222222" stroke-width="1.8" marker-end="url(#arrow)" />
+  <polyline id="response-to-score" points="195,210 195,193 990,193 990,210" fill="none" stroke="#222222" stroke-width="1.8" marker-end="url(#arrow)" />
+  <rect id="variable" x="30" y="432" width="440" height="165" fill="#ffffff" stroke="#222222" stroke-width="3" />
+  <text id="variable-title" x="50" y="466" font-family="DejaVu Sans, sans-serif" font-size="21" font-weight="bold" fill="#111111">CONTROLLED INTERVENTION</text>
+  <text id="variable-0" x="50" y="505" font-family="DejaVu Sans, sans-serif" font-size="20" font-weight="normal" fill="#111111">Coordinate-learning objective m</text>
+  <text id="variable-1" x="50" y="536" font-family="DejaVu Sans, sans-serif" font-size="20" font-weight="normal" fill="#111111">Common coordinate family + decoder</text>
+  <text id="variable-2" x="50" y="567" font-family="DejaVu Sans, sans-serif" font-size="20" font-weight="normal" fill="#111111">Common inputs, responses and budgets</text>
+  <rect id="output" x="540" y="432" width="630" height="165" fill="#ffffff" stroke="#222222" stroke-width="1.5" />
+  <text id="output-title" x="560" y="466" font-family="DejaVu Sans, sans-serif" font-size="21" font-weight="bold" fill="#111111">Fitted prediction and observed loss</text>
+  <text id="output-0" x="560" y="505" font-family="DejaVu Sans, sans-serif" font-size="20" font-weight="normal" fill="#111111">A, selected support S, fitted coefficients â</text>
+  <text id="output-1" x="560" y="536" font-family="DejaVu Sans, sans-serif" font-size="20" font-weight="normal" fill="#111111">d̂ₓ(v) = âᵀAv       with at most k nonzeros</text>
+  <text id="output-2" x="560" y="567" font-family="DejaVu Sans, sans-serif" font-size="20" font-weight="normal" fill="#111111">Unit loss Lᵤ; paired Δ = Lᵤ(m) − Lᵤ(m₀)</text>
+  <polyline id="transcript-to-output" points="585,380 585,432" fill="none" stroke="#222222" stroke-width="1.8" marker-end="url(#arrow)" />
+  <polyline id="score-to-output" points="1020,380 1020,432" fill="none" stroke="#222222" stroke-width="1.8" marker-end="url(#arrow)" />
+  <polyline id="intervention-to-output" points="470,515 540,515" fill="none" stroke="#222222" stroke-width="1.8" marker-end="url(#arrow)" />
+  <rect id="gap" x="30" y="640" width="1140" height="100" fill="#ffffff" stroke="#222222" stroke-width="1.5" stroke-dasharray="7 5" />
+  <text id="gap-title" x="50" y="672" font-family="DejaVu Sans, sans-serif" font-size="20" font-weight="bold" fill="#111111">ATTRIBUTION GAP</text>
+  <text id="gap-0" x="50" y="704" font-family="DejaVu Sans, sans-serif" font-size="20" font-weight="normal" fill="#111111">A lower fresh loss may reflect approximation, support identification, or coefficient estimation.</text>
+  <text id="gap-1" x="50" y="730" font-family="DejaVu Sans, sans-serif" font-size="20" font-weight="normal" fill="#111111">Negative Δ favors the method; response fidelity alone does not establish physical meaning.</text>
+</svg>

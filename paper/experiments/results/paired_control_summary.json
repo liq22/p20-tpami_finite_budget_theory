@@ -1,0 +1,104 @@
+{
+  "evidence_kind": "controlled_synthetic_only",
+  "fixed_predictor": "ContextGatedPredictor",
+  "seed": 7,
+  "signal_dim": 12,
+  "candidate_count": 10,
+  "k": 1,
+  "ridge": 0.0001,
+  "intervention_scale": 0.5,
+  "routing_descriptor": "pre-response context group; never perturbed",
+  "claim_boundary": "Synthetic estimator contrast, not routing-class superiority or measured deployment savings.",
+  "same_information_control": "Union emulation receives the identical descriptor, fitted group rule and Q response transcript.",
+  "cross_budget_pairing": "Within each Q methods are paired; different Q values use fresh units.",
+  "budgets": {
+    "3": {
+      "selected_best_single": "dct",
+      "group_route": {
+        "0": "identity",
+        "1": "dct"
+      },
+      "hindsight_table_gap_not_population_headroom": 0.09838883927159227,
+      "max_route_union_prediction_error": 0.0,
+      "means": {
+        "reference_identity": 0.23352848392842107,
+        "best_single": 0.12243777810740375,
+        "static_union": 0.18183937128662758,
+        "dynamic_group_route": 0.043276748506161054,
+        "context_matched_union": 0.043276748506161054,
+        "shuffled_descriptor_route": 0.20825891018777748,
+        "test_candidate_hindsight_min": 0.02404893883581148
+      },
+      "static_dictionary_columns": 130,
+      "routed_dictionary_columns": 13,
+      "fit_forward_examples_per_test_unit": 4,
+      "score_forward_examples_per_test_unit": 128
+    },
+    "6": {
+      "selected_best_single": "dct",
+      "group_route": {
+        "0": "identity",
+        "1": "dct"
+      },
+      "hindsight_table_gap_not_population_headroom": 0.0605567861428337,
+      "max_route_union_prediction_error": 0.0,
+      "means": {
+        "reference_identity": 0.10500581064258031,
+        "best_single": 0.07731285835972726,
+        "static_union": 0.039829585453327786,
+        "dynamic_group_route": 0.016756072216893562,
+        "context_matched_union": 0.016756072216893562,
+        "shuffled_descriptor_route": 0.0933250949449714,
+        "test_candidate_hindsight_min": 0.016756072216893562
+      },
+      "static_dictionary_columns": 130,
+      "routed_dictionary_columns": 13,
+      "fit_forward_examples_per_test_unit": 7,
+      "score_forward_examples_per_test_unit": 128
+    },
+    "12": {
+      "selected_best_single": "dct",
+      "group_route": {
+        "0": "identity",
+        "1": "dct"
+      },
+      "hindsight_table_gap_not_population_headroom": 0.047721759236067814,
+      "max_route_union_prediction_error": 0.0,
+      "means": {
+        "reference_identity": 0.09187619681501875,
+        "best_single": 0.06150531753956712,
+        "static_union": 0.013783558303499305,
+        "dynamic_group_route": 0.013783558303499305,
+        "context_matched_union": 0.013783558303499305,
+        "shuffled_descriptor_route": 0.07689280390780917,
+        "test_candidate_hindsight_min": 0.013783558303499305
+      },
+      "static_dictionary_columns": 130,
+      "routed_dictionary_columns": 13,
+      "fit_forward_examples_per_test_unit": 13,
+      "score_forward_examples_per_test_unit": 128
+    },
+    "24": {
+      "selected_best_single": "dct",
+      "group_route": {
+        "0": "identity",
+        "1": "dct"
+      },
+      "hindsight_table_gap_not_population_headroom": 0.04959837250521844,
+      "max_route_union_prediction_error": 0.0,
+      "means": {
+        "reference_identity": 0.08258488637740766,
+        "best_single": 0.06320642721712742,
+        "static_union": 0.013608054711908988,
+        "dynamic_group_route": 0.013608054711908988,
+        "context_matched_union": 0.013608054711908988,
+        "shuffled_descriptor_route": 0.08231660634302716,
+        "test_candidate_hindsight_min": 0.013608054711908988
+      },
+      "static_dictionary_columns": 130,
+      "routed_dictionary_columns": 13,
+      "fit_forward_examples_per_test_unit": 25,
+      "score_forward_examples_per_test_unit": 128
+    }
+  }
+}

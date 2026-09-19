@@ -1,0 +1,68 @@
+<?xml version='1.0' encoding='utf-8'?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 1030" width="180mm" height="154.5mm" role="img">
+  <title>Shared-coordinate method: training, selection and frozen evaluation</title>
+  <defs>
+    <marker id="arrow" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto" markerUnits="userSpaceOnUse">
+      <path d="M0,0 L8,4 L0,8 Z" fill="#222222" />
+    </marker>
+  </defs>
+  <rect id="canvas" x="0" y="0" width="1200" height="1030" fill="#ffffff" stroke="#222222" stroke-width="0" />
+  <text id="title" x="30" y="40" font-family="DejaVu Sans, sans-serif" font-size="25" font-weight="bold" fill="#111111">Learn the shared basis; fit a new sparse decoder at each input</text>
+  <text id="legend" x="30" y="74" font-family="DejaVu Sans, sans-serif" font-size="19" font-weight="normal" fill="#111111">Thin outline: inherited operation   ·   Heavy outline: learning intervention   ·   Dashed arrow: update</text>
+  <text id="train-title" x="30" y="115" font-family="DejaVu Sans, sans-serif" font-size="22" font-weight="bold" fill="#111111">a  DEVELOPMENT TRAINING — no selection or test units</text>
+  <rect id="train-data" x="30" y="143" width="290" height="354" fill="#ffffff" stroke="#222222" stroke-width="1.5" />
+  <text id="train-data-title" x="48" y="177" font-family="DejaVu Sans, sans-serif" font-size="20" font-weight="bold" fill="#111111">Fixed response data</text>
+  <text id="train-data-0" x="48" y="219" font-family="DejaVu Sans, sans-serif" font-size="19" font-weight="normal" fill="#111111">Actual input x</text>
+  <text id="train-data-1" x="48" y="255" font-family="DejaVu Sans, sans-serif" font-size="19" font-weight="normal" fill="#111111">Fit table: V, d  (Q)</text>
+  <text id="outer-data-title" x="48" y="363" font-family="DejaVu Sans, sans-serif" font-size="20" font-weight="bold" fill="#111111">Fresh outer table</text>
+  <text id="outer-data-0" x="48" y="405" font-family="DejaVu Sans, sans-serif" font-size="19" font-weight="normal" fill="#111111">Vᵒᵘᵗ, dᵒᵘᵗ  (R responses)</text>
+  <text id="outer-data-1" x="48" y="441" font-family="DejaVu Sans, sans-serif" font-size="19" font-weight="normal" fill="#111111">Training information only</text>
+  <rect id="basis" x="370" y="143" width="320" height="170" fill="#ffffff" stroke="#222222" stroke-width="1.5" />
+  <text id="basis-title" x="388" y="177" font-family="DejaVu Sans, sans-serif" font-size="20" font-weight="bold" fill="#111111">Shared orthogonal basis</text>
+  <text id="basis-0" x="388" y="214" font-family="DejaVu Sans, sans-serif" font-size="20" font-weight="normal" fill="#111111">Aθ = exp(Sθ),  Sθ = −Sθᵀ</text>
+  <text id="basis-1" x="388" y="245" font-family="DejaVu Sans, sans-serif" font-size="20" font-weight="normal" fill="#111111">One basis across all inputs</text>
+  <text id="basis-2" x="388" y="276" font-family="DejaVu Sans, sans-serif" font-size="20" font-weight="normal" fill="#111111">Z = VAθᵀ; same raw response</text>
+  <rect id="decoder" x="740" y="143" width="430" height="170" fill="#ffffff" stroke="#222222" stroke-width="1.5" />
+  <text id="decoder-title" x="758" y="177" font-family="DejaVu Sans, sans-serif" font-size="20" font-weight="bold" fill="#111111">Inherited finite-query decoder</text>
+  <text id="decoder-0" x="758" y="214" font-family="DejaVu Sans, sans-serif" font-size="20" font-weight="normal" fill="#111111">Normalized greedy support (at most k)</text>
+  <text id="decoder-1" x="758" y="245" font-family="DejaVu Sans, sans-serif" font-size="20" font-weight="normal" fill="#111111">Restricted ridge coefficients â_S</text>
+  <text id="decoder-2" x="758" y="276" font-family="DejaVu Sans, sans-serif" font-size="20" font-weight="normal" fill="#111111">Positive λ; not a population oracle</text>
+  <polyline id="training-data-flow" points="320,230 370,230" fill="none" stroke="#222222" stroke-width="1.8" marker-end="url(#arrow)" />
+  <polyline id="training-basis-flow" points="690,230 740,230" fill="none" stroke="#222222" stroke-width="1.8" marker-end="url(#arrow)" />
+  <rect id="outer-objective" x="370" y="360" width="800" height="137" fill="#ffffff" stroke="#222222" stroke-width="3" />
+  <text id="outer-title" x="388" y="394" font-family="DejaVu Sans, sans-serif" font-size="21" font-weight="bold" fill="#111111">RESPONSE-DRIVEN OUTER OBJECTIVE</text>
+  <text id="outer-0" x="388" y="431" font-family="DejaVu Sans, sans-serif" font-size="20" font-weight="normal" fill="#111111">Fresh response error of the fitted Q-query decoder</text>
+  <text id="outer-1" x="388" y="464" font-family="DejaVu Sans, sans-serif" font-size="20" font-weight="normal" fill="#111111">Update θ through the current support branch; predictor s remains frozen</text>
+  <polyline id="decoder-to-outer" points="960,313 960,360" fill="none" stroke="#222222" stroke-width="1.8" marker-end="url(#arrow)" />
+  <polyline id="outer-update" points="530,360 530,313" fill="none" stroke="#222222" stroke-width="1.8" marker-end="url(#arrow)" stroke-dasharray="7 5" />
+  <polyline id="outer-responses" points="320,425 370,425" fill="none" stroke="#222222" stroke-width="1.8" marker-end="url(#arrow)" />
+  <text id="proxies-0" x="30" y="533" font-family="DejaVu Sans, sans-serif" font-size="19" font-weight="normal" fill="#111111">Matched outer-loss replacements: actual-input reconstruction / coefficient concentration.</text>
+  <text id="proxies-1" x="30" y="557" font-family="DejaVu Sans, sans-serif" font-size="19" font-weight="normal" fill="#111111">All objectives retain the same downstream decoder and response-based selection.</text>
+  <text id="selection-title" x="30" y="580" font-family="DejaVu Sans, sans-serif" font-size="22" font-weight="bold" fill="#111111">b  INDEPENDENT SELECTION — one deployment criterion</text>
+  <rect id="snapshots" x="30" y="606" width="450" height="112" fill="#ffffff" stroke="#222222" stroke-width="1.5" />
+  <text id="snapshots-title" x="48" y="642" font-family="DejaVu Sans, sans-serif" font-size="21" font-weight="bold" fill="#111111">Frozen candidate trajectories</text>
+  <text id="snapshots-0" x="48" y="678" font-family="DejaVu Sans, sans-serif" font-size="19" font-weight="normal" fill="#111111">Identity + prespecified checkpoints</text>
+  <rect id="selection" x="550" y="606" width="620" height="112" fill="#ffffff" stroke="#222222" stroke-width="1.5" />
+  <text id="selection-box-title" x="568" y="642" font-family="DejaVu Sans, sans-serif" font-size="21" font-weight="bold" fill="#111111">Select by fresh response loss on separate units</text>
+  <text id="selection-0" x="568" y="678" font-family="DejaVu Sans, sans-serif" font-size="19" font-weight="normal" fill="#111111">Same rule for learned and fixed families; identity wins ties</text>
+  <polyline id="snapshot-to-selection" points="480,663 550,663" fill="none" stroke="#222222" stroke-width="1.8" marker-end="url(#arrow)" />
+  <polyline id="training-to-snapshots" points="1170,476 1185,476 1185,594 256,594 256,606" fill="none" stroke="#222222" stroke-width="1.8" marker-end="url(#arrow)" />
+  <text id="test-title" x="30" y="763" font-family="DejaVu Sans, sans-serif" font-size="22" font-weight="bold" fill="#111111">c  NEW INPUT / FINAL EVALUATION — no basis update</text>
+  <rect id="freeze" x="30" y="790" width="315" height="138" fill="#ffffff" stroke="#222222" stroke-width="1.5" />
+  <text id="freeze-title" x="48" y="825" font-family="DejaVu Sans, sans-serif" font-size="21" font-weight="bold" fill="#111111">Frozen basis A</text>
+  <text id="freeze-0" x="48" y="862" font-family="DejaVu Sans, sans-serif" font-size="19" font-weight="normal" fill="#111111">New x and Q responses</text>
+  <text id="freeze-1" x="48" y="893" font-family="DejaVu Sans, sans-serif" font-size="19" font-weight="normal" fill="#111111">Fit only support + coefficients</text>
+  <rect id="prediction" x="400" y="790" width="325" height="138" fill="#ffffff" stroke="#222222" stroke-width="1.5" />
+  <text id="prediction-title" x="418" y="825" font-family="DejaVu Sans, sans-serif" font-size="20" font-weight="bold" fill="#111111">Response prediction</text>
+  <text id="prediction-0" x="418" y="862" font-family="DejaVu Sans, sans-serif" font-size="19" font-weight="normal" fill="#111111">d̂ₓ(v) = âᵀAv</text>
+  <text id="prediction-1" x="418" y="893" font-family="DejaVu Sans, sans-serif" font-size="19" font-weight="normal" fill="#111111">No evaluation-response access</text>
+  <rect id="evaluation" x="780" y="790" width="390" height="138" fill="#ffffff" stroke="#222222" stroke-width="1.5" />
+  <text id="evaluation-title" x="798" y="825" font-family="DejaVu Sans, sans-serif" font-size="21" font-weight="bold" fill="#111111">Fresh scoring only</text>
+  <text id="evaluation-0" x="798" y="862" font-family="DejaVu Sans, sans-serif" font-size="19" font-weight="normal" fill="#111111">Independent displacements → loss</text>
+  <text id="evaluation-1" x="798" y="893" font-family="DejaVu Sans, sans-serif" font-size="19" font-weight="normal" fill="#111111">Aggregate by unit → paired Δ</text>
+  <polyline id="selected-to-test" points="1170,678 1185,678 1185,778 186,778 186,790" fill="none" stroke="#222222" stroke-width="1.8" marker-end="url(#arrow)" />
+  <polyline id="fit-to-predict" points="345,855 400,855" fill="none" stroke="#222222" stroke-width="1.8" marker-end="url(#arrow)" />
+  <polyline id="predict-to-evaluate" points="725,855 780,855" fill="none" stroke="#222222" stroke-width="1.8" marker-end="url(#arrow)" />
+  <text id="footer-0" x="30" y="967" font-family="DejaVu Sans, sans-serif" font-size="19" font-weight="normal" fill="#111111">External control: âᵀAⱼv = ãᵀΨ(v), with ã = [0; …; â; …; 0] and the same (k, Q).</text>
+  <text id="footer-1" x="30" y="996" font-family="DejaVu Sans, sans-serif" font-size="19" font-weight="normal" fill="#111111">Construction chooses the support; independent scoring measures response fidelity.</text>
+</svg>
